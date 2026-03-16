@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Consultants — Query 15 AI models simultaneously</title>
+    <meta name="description" content="A council of AI experts for every coding decision. Query 15 AI models simultaneously, get weighted synthesis, and multi-agent debate.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg: #0a0a0a;
+            --bg-elevated: #111;
+            --bg-card: #141414;
+            --border: #222;
+            --border-light: #2a2a2a;
+            --text: #f0f0f0;
+            --text-secondary: #999;
+            --text-muted: #555;
+            --accent: #f0f0f0;
+            --font-body: 'Space Grotesk', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+        }
+
+        html { scroll-behavior: smooth; scroll-padding-top: 80px; }
+
+        body {
+            font-family: var(--font-body);
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container { max-width: 960px; margin: 0 auto; padding: 0 24px; }
+
+        /* ——— NAV ——— */
+        nav {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(10, 10, 10, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .nav-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 64px;
+        }
+
+        .nav-logo {
+            font-family: var(--font-mono);
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--text);
+            text-decoration: none;
+            letter-spacing: -0.02em;
+        }
+
+        .nav-links { display: flex; gap: 32px; list-style: none; }
+
+        .nav-links a {
+            font-family: var(--font-mono);
+            font-size: 13px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover { color: var(--text); }
+
+        .hamburger {
+            display: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 4px;
+        }
+
+        .hamburger span {
+            display: block;
+            width: 20px;
+            height: 1.5px;
+            background: var(--text);
+            margin: 5px 0;
+            transition: all 0.3s;
+        }
+
+        /* ——— SECTION LABELS ——— */
+        .section-label {
+            font-family: var(--font-mono);
+            font-size: 11px;
+            font-weight: 500;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+        }
+
+        /* ——— HERO ——— */
+        .hero {
+            padding: 100px 0 80px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .hero-badges {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 24px;
+        }
+
+        .badge {
+            font-family: var(--font-mono);
+            font-size: 12px;
+            font-weight: 500;
+            letter-spacing: 0.04em;
+            color: var(--text-secondary);
+            border: 1px solid var(--border-light);
+            padding: 5px 12px;
+        }
+
+        .hero h1 {
+            font-size: clamp(40px, 6vw, 64px);
+            font-weight: 700;
+            letter-spacing: -0.03em;
+            line-height: 1.1;
+            margin-bottom: 20px;
+        }
+
+        .hero-tagline {
+            font-size: clamp(16px, 2vw, 19px);
+            color: var(--text-secondary);
+            max-width: 600px;
+            line-height: 1.5;
+            margin-bottom: 40px;
+        }
+
+        .hero-ctas { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 32px; }
+
+        .btn {
+            font-family: var(--font-mono);
+            font-size: 14px;
+            padding: 12px 24px;
+            border: 1px solid var(--border-light);
+            background: transparent;
+            color: var(--text);
+            text-decoration: none;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .btn:hover { border-color: var(--text-secondary); background: var(--bg-elevated); }
+
+        .btn .arrow { transition: transform 0.2s; }
+        .btn:hover .arrow { transform: translateX(3px); }
+
+        .btn-npx {
+            background: var(--bg-elevated);
+            color: var(--text-muted);
+            cursor: pointer;
+            user-select: all;
+            position: relative;
+        }
+
+        .btn-npx:hover { color: var(--text-secondary); }
+
+        .hero-agents {
+            font-family: var(--font-mono);
+            font-size: 12px;
+            color: var(--text-muted);
+            line-height: 1.8;
+        }
+
+        .hero-agents span { color: var(--text-secondary); }
+
+        /* ——— SECTIONS ——— */
+        section { padding: 80px 0; border-bottom: 1px solid var(--border); }
+
+        section h2 {
+            font-size: clamp(28px, 4vw, 36px);
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            margin-bottom: 24px;
+        }
+
+        section p.section-desc {
+            font-size: 17px;
+            color: var(--text-secondary);
+            max-width: 600px;
+            line-height: 1.6;
+            margin-bottom: 48px;
+        }
+
+        /* ——— WHAT IT DOES ——— */
+        .what-text {
+            display: grid;
+            gap: 20px;
+            max-width: 640px;
+        }
+
+        .what-text p {
+            font-size: 16px;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        /* ——— FEATURE GRID ——— */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1px;
+            background: var(--border);
+            border: 1px solid var(--border);
+        }
+
+        .feature-card {
+            background: var(--bg);
+            padding: 32px;
+        }
+
+        .feature-card h3 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .feature-card .feature-icon {
+            font-family: var(--font-mono);
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+            letter-spacing: 0.05em;
+        }
+
+        /* ——— PIPELINE ——— */
+        .pipeline {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+            margin-bottom: 48px;
+            font-family: var(--font-mono);
+            font-size: 13px;
+        }
+
+        .pipeline-step {
+            padding: 8px 16px;
+            border: 1px solid var(--border-light);
+            color: var(--text-secondary);
+        }
+
+        .pipeline-arrow { color: var(--text-muted); }
+
+        .steps { display: grid; gap: 32px; }
+
+        .step {
+            display: grid;
+            grid-template-columns: 40px 1fr;
+            gap: 16px;
+            align-items: start;
+        }
+
+        .step-num {
+            font-family: var(--font-mono);
+            font-size: 13px;
+            color: var(--text-muted);
+            padding-top: 2px;
+        }
+
+        .step h3 { font-size: 16px; font-weight: 600; margin-bottom: 6px; }
+        .step p { font-size: 14px; color: var(--text-secondary); line-height: 1.6; }
+
+        /* ——— CONSULTANT GRID ——— */
+        .consultant-group { margin-bottom: 40px; }
+        .consultant-group:last-child { margin-bottom: 0; }
+
+        .group-label {
+            font-family: var(--font-mono);
+            font-size: 11px;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .consultant-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1px;
+            background: var(--border);
+            border: 1px solid var(--border);
+        }
+
+        .consultant-card {
+            background: var(--bg);
+            padding: 20px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .consultant-name {
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        .consultant-persona {
+            font-family: var(--font-mono);
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .consultant-focus {
+            font-size: 13px;
+            color: var(--text-secondary);
+            text-align: right;
+        }
+
+        /* ——— CODE BLOCKS ——— */
+        .install-methods { display: grid; gap: 32px; }
+
+        .install-method h3 {
+            font-family: var(--font-mono);
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+        }
+
+        pre {
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            padding: 20px 24px;
+            overflow-x: auto;
+            font-family: var(--font-mono);
+            font-size: 13px;
+            line-height: 1.7;
+            color: var(--text-secondary);
+        }
+
+        pre .comment { color: var(--text-muted); }
+        pre .cmd { color: var(--text); }
+
+        /* ——— TABLES ——— */
+        .config-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+            margin-bottom: 32px;
+        }
+
+        .config-table th {
+            font-family: var(--font-mono);
+            font-size: 12px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-muted);
+            text-align: left;
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .config-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-secondary);
+        }
+
+        .config-table td:first-child {
+            font-family: var(--font-mono);
+            font-size: 13px;
+            color: var(--text);
+        }
+
+        .config-table tr:last-child td { border-bottom: none; }
+
+        .table-wrapper {
+            border: 1px solid var(--border);
+            overflow-x: auto;
+            margin-bottom: 32px;
+        }
+
+        .table-wrapper .config-table { margin-bottom: 0; }
+
+        /* ——— AGENTS NOTE ——— */
+        .agents-note {
+            font-family: var(--font-mono);
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 24px;
+            padding: 16px 20px;
+            border: 1px solid var(--border);
+            line-height: 1.7;
+        }
+
+        /* ——— FOOTER ——— */
+        footer {
+            padding: 48px 0;
+            border-top: 1px solid var(--border);
+        }
+
+        .footer-inner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 24px;
+            list-style: none;
+        }
+
+        .footer-links a {
+            font-family: var(--font-mono);
+            font-size: 13px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .footer-links a:hover { color: var(--text); }
+
+        .footer-credit {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .footer-credit a {
+            color: var(--text-secondary);
+            text-decoration: none;
+        }
+
+        .footer-credit a:hover { color: var(--text); }
+
+        /* ——— RESPONSIVE ——— */
+        @media (min-width: 640px) {
+            .feature-grid { grid-template-columns: repeat(2, 1fr); }
+            .consultant-grid { grid-template-columns: 1fr; }
+            .consultant-card { gap: 16px; }
+            .hero-ctas { flex-direction: row; }
+        }
+
+        @media (min-width: 960px) {
+            .feature-grid { grid-template-columns: repeat(3, 1fr); }
+            .consultant-grid { grid-template-columns: repeat(3, 1fr); }
+        }
+
+        @media (max-width: 639px) {
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 64px;
+                left: 0;
+                right: 0;
+                background: rgba(10, 10, 10, 0.95);
+                backdrop-filter: blur(12px);
+                border-bottom: 1px solid var(--border);
+                flex-direction: column;
+                padding: 24px;
+                gap: 20px;
+            }
+
+            .nav-links.open { display: flex; }
+            .hamburger { display: block; }
+
+            .consultant-card {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 4px;
+            }
+
+            .consultant-focus { text-align: left; }
+
+            .footer-inner { flex-direction: column; align-items: flex-start; }
+
+            section { padding: 60px 0; }
+            .hero { padding: 72px 0 60px; }
+        }
+
+        /* ——— COPY TOAST ——— */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            font-family: var(--font-mono);
+            font-size: 13px;
+            color: var(--text);
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-light);
+            padding: 10px 20px;
+            opacity: 0;
+            transition: all 0.3s;
+            pointer-events: none;
+            z-index: 200;
+        }
+
+        .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+        /* ——— SUB-HEADING ——— */
+        .sub-heading {
+            font-family: var(--font-mono);
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-top: 48px;
+            margin-bottom: 16px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+    <div class="container nav-inner">
+        <a href="#" class="nav-logo">AI Consultants</a>
+        <button class="hamburger" aria-label="Toggle menu" onclick="document.querySelector('.nav-links').classList.toggle('open')">
+            <span></span><span></span><span></span>
+        </button>
+        <ul class="nav-links">
+            <li><a href="#features" onclick="closeMenu()">Features</a></li>
+            <li><a href="#how-it-works" onclick="closeMenu()">How it works</a></li>
+            <li><a href="#consultants" onclick="closeMenu()">Consultants</a></li>
+            <li><a href="#docs" onclick="closeMenu()">Docs</a></li>
+        </ul>
+    </div>
+</nav>
+
+<!-- HERO -->
+<header class="hero">
+    <div class="container">
+        <div class="hero-badges">
+            <span class="badge">Claude Code Skill</span>
+            <span class="badge">v2.10.1</span>
+            <span class="badge">MIT License</span>
+        </div>
+        <h1>AI Consultants</h1>
+        <p class="hero-tagline">Query 15 AI models simultaneously. Get diverse perspectives, weighted synthesis, and multi-agent debate for your coding decisions.</p>
+        <div class="hero-ctas">
+            <a href="https://github.com/matteoscurati/ai-consultants" class="btn" target="_blank" rel="noopener">View on GitHub <span class="arrow">&rarr;</span></a>
+            <a href="https://www.npmjs.com/package/ai-consultants" class="btn" target="_blank" rel="noopener">npm <span class="arrow">&rarr;</span></a>
+            <button class="btn btn-npx" onclick="copyNpx()">$ npx ai-consultants</button>
+        </div>
+        <div class="hero-agents">
+            <span>Supported agents:</span> Claude Code, Codex CLI, Gemini CLI, Cursor, Copilot, Windsurf, Aider, Amp, Kimi, Standalone Bash
+        </div>
+    </div>
+</header>
+
+<!-- WHAT IT DOES -->
+<section id="what">
+    <div class="container">
+        <div class="section-label">What it does</div>
+        <h2>A council of AI experts for every coding decision</h2>
+        <div class="what-text">
+            <p>AI Consultants is a multi-model deliberation system. Instead of relying on a single AI for coding advice, it queries up to 15 different AI models in parallel &mdash; each with a unique persona and focus area.</p>
+            <p>Every consultant provides a confidence-scored response. The system then synthesizes all perspectives into a weighted recommendation, highlights points of agreement and disagreement, and optionally runs multi-round debates where consultants critique each other's positions.</p>
+            <p>The result: better decisions through cognitive diversity. When 12 out of 15 models agree, you can move fast. When they disagree, you know exactly where the risks are.</p>
+        </div>
+    </div>
+</section>
+
+<!-- FEATURES -->
+<section id="features">
+    <div class="container">
+        <div class="section-label">Features</div>
+        <h2>Everything you need</h2>
+        <p class="section-desc">Built for developers who want more than a single opinion.</p>
+        <div class="feature-grid">
+            <div class="feature-card">
+                <div class="feature-icon">01</div>
+                <h3>15 AI Consultants</h3>
+                <p>Gemini, Codex, Mistral, Kilo, Cursor, Aider, Amp, Kimi, Claude, Qwen3, GLM, Grok, DeepSeek, MiniMax, and Ollama. Each with a unique persona.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">02</div>
+                <h3>Automatic Synthesis</h3>
+                <p>All responses are combined into a single weighted recommendation with confidence scoring and consensus analysis.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">03</div>
+                <h3>Multi-Agent Debate</h3>
+                <p>Consultants critique each other across multiple rounds. Positions evolve. Anonymous peer review identifies the strongest arguments.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">04</div>
+                <h3>Smart Routing</h3>
+                <p>Questions are classified by category and routed to the most relevant consultants. Security questions go to security experts first.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">05</div>
+                <h3>Quality Tiers</h3>
+                <p>Premium, standard, and economy model tiers. Choose max_quality for critical decisions or fast for quick checks.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">06</div>
+                <h3>Cost Control</h3>
+                <p>Budget enforcement, semantic caching, cost-aware routing, and response limits. Stay within budget without sacrificing quality.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how-it-works">
+    <div class="container">
+        <div class="section-label">How it works</div>
+        <h2>From question to recommendation</h2>
+        <div class="pipeline">
+            <span class="pipeline-step">Query</span>
+            <span class="pipeline-arrow">&rarr;</span>
+            <span class="pipeline-step">Classify</span>
+            <span class="pipeline-arrow">&rarr;</span>
+            <span class="pipeline-step">Parallel Queries</span>
+            <span class="pipeline-arrow">&rarr;</span>
+            <span class="pipeline-step">Vote</span>
+            <span class="pipeline-arrow">&rarr;</span>
+            <span class="pipeline-step">Synthesize</span>
+            <span class="pipeline-arrow">&rarr;</span>
+            <span class="pipeline-step">Report</span>
+        </div>
+        <div class="steps">
+            <div class="step">
+                <div class="step-num">01</div>
+                <div>
+                    <h3>Classify</h3>
+                    <p>Your question is analyzed and categorized &mdash; architecture, security, performance, code review, quick syntax &mdash; to determine which consultants are most relevant and what depth of analysis is needed.</p>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-num">02</div>
+                <div>
+                    <h3>Consult</h3>
+                    <p>Selected consultants are queried in parallel. Each responds with a structured JSON output including a summary, detailed analysis, pros/cons, and a confidence score from 1 to 10.</p>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-num">03</div>
+                <div>
+                    <h3>Synthesize</h3>
+                    <p>All responses are aggregated. Consensus is calculated, confidence intervals computed, and a weighted recommendation is generated using your chosen synthesis strategy.</p>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-num">04</div>
+                <div>
+                    <h3>Debate</h3>
+                    <p>Optionally, consultants enter a multi-round debate. They critique each other's positions, update their confidence scores, and converge (or diverge) on a recommendation. Panic mode triggers extra rigor when uncertainty is high.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- THE PANEL -->
+<section id="consultants">
+    <div class="container">
+        <div class="section-label">The Panel</div>
+        <h2>15 consultants, 15 perspectives</h2>
+        <p class="section-desc">Each consultant has a distinct persona that shapes their analysis. The invoking agent is automatically excluded to prevent self-consultation.</p>
+
+        <div class="consultant-group">
+            <div class="group-label">CLI-Based &mdash; 9 consultants</div>
+            <div class="consultant-grid">
+                <div class="consultant-card">
+                    <div>
+                        <div class="consultant-name">Google Gemini</div>
+                        <div class="consultant-persona">The Architect</div>
+                    </div>
+                    <div class="consultant-focus">Design, scalability, enterprise</div>
+                </div>
+                <div class="consultant-card">
+                    <div>
+                        <div class="consultant-name">OpenAI Codex</div>
+                        <div class="consultant-persona">The Pragmatist</div>
+                    </div>
+                    <div class="consultant-focus">Simplicity, proven solutions</div>
+                </div>
+                <div class="consultant-card">
+                    <div>
+                        <div class="consultant-name">Mistral Vibe</div>
+                        <div class="consultant-persona">The Devil's Advocate</div>
+                    </div>
+                    <div class="consultant-focus">Edge cases, risks, security</div>
+                </div>
+                <div class="consultant-card">
+                    <div>
+                        <div class="consultant-name">Kilo Code</div>
+                        <div class="consultant-persona">The Innovator</div>
+                    </div>
+                    <div class="consultant-focus">Creative, unconventional</div>
+                </div>
+                <div class="consultant-card">
+                    <div>
+                        <div class="consultant-name">Cursor</div>
+                        <div class="consultant-persona">The Integrator</div>
+                    </div>
+                    <div class="consultant-focus">Full-stack perspective</div>
+                </div>
+                <div class="consultant-card">
+                    <div>
+                        <div class="consultant-name">Aider</div>
+                        <div class="consultant-persona">The Pair Programmer</div>
+                    </div>
+                    <div class="consultant-focus">Collaborative coding</div>
+                </div>
+                <div class="consultant-card">
+                    <div>
+                        <div class="consultant-name">Amp</div>
+                        <div class="consultant-persona">The Systems Thinker</div>
+                    </div>
+                    <div class="consultant-focus">System design, interactions</div>
+                </div>
+                <div class="consultant-card">
+                    <div>
+                        <div class="consultant-name">Kimi</div>
+                        <div class="consultant-persona">The Eastern Sage</div>
+                    </div>
+                    <div class="consultant-focus">Holistic, balanced views</div>
+                </div>
+                <div class="consultant-card">
+                    <div>
+                        <div class="consultant-name">Claude</div>
+                        <div class="consultant-persona">The Synthesizer</div>
+                    </div>
+                    <div class="consultant-focus">Big picture, synthesis</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="consultant-group">
+            <div class="group-label">API-Based &mdash; 5 consultants</div>
+            <div class="consultant-grid">
+                <div class="consultant-card">
+                    <div>
+                        <div class="consultant-name">Qwen3</div>
+                        <div class="consultant-persona">The Analyst</div>
+                    </div>
+                    <div class="consultant-focus">Data-driven, metrics</div>
+                </div>
+                <div class="consultant-card">
+                    <div>
+                        <div class="consultant-name">GLM</div>
+                        <div class="consultant-persona">The Methodologist</div>
+                    </div>
+                    <div class="consultant-focus">Structured approaches</div>
+                </div>
+                <div class="consultant-card">
+                    <div>
+                        <div class="consultant-name">Grok</div>
+                        <div class="consultant-persona">The Provocateur</div>
+                    </div>
+                    <div class="consultant-focus">Challenge conventions</div>
+                </div>
+                <div class="consultant-card">
+                    <div>
+                        <div class="consultant-name">DeepSeek</div>
+                        <div class="consultant-persona">The Code Specialist</div>
+                    </div>
+                    <div class="consultant-focus">Algorithms, code gen</div>
+                </div>
+                <div class="consultant-card">
+                    <div>
+                        <div class="consultant-name">MiniMax</div>
+                        <div class="consultant-persona">The Pragmatic Optimizer</div>
+                    </div>
+                    <div class="consultant-focus">Performance, efficiency</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="consultant-group">
+            <div class="group-label">Local &mdash; 1 consultant</div>
+            <div class="consultant-grid">
+                <div class="consultant-card">
+                    <div>
+                        <div class="consultant-name">Ollama</div>
+                        <div class="consultant-persona">The Local Expert</div>
+                    </div>
+                    <div class="consultant-focus">Privacy-first, zero API cost</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- DOCS / GET STARTED -->
+<section id="docs">
+    <div class="container">
+        <div class="section-label">Get Started</div>
+        <h2>Up and running in 30 seconds</h2>
+        <div class="install-methods">
+            <div class="install-method">
+                <h3>Option A: npx (recommended)</h3>
+<pre><span class="comment"># Run directly &mdash; no install needed</span>
+<span class="cmd">npx ai-consultants "How should I structure my auth system?"</span>
+
+<span class="comment"># With a preset</span>
+<span class="cmd">npx ai-consultants --preset balanced "Redis or Memcached?"</span>
+
+<span class="comment"># Run diagnostics</span>
+<span class="cmd">npx ai-consultants doctor --fix</span>
+
+<span class="comment"># Install slash commands for Claude Code</span>
+<span class="cmd">npx ai-consultants install</span></pre>
+            </div>
+            <div class="install-method">
+                <h3>Option B: Claude Code skill (curl | bash)</h3>
+<pre><span class="comment"># Install the skill</span>
+<span class="cmd">curl -fsSL https://raw.githubusercontent.com/matteoscurati/ai-consultants/main/scripts/install.sh | bash</span>
+
+<span class="comment"># Ask your first question</span>
+<span class="cmd">/ai-consultants:consult "How should I structure my auth system?"</span></pre>
+            </div>
+            <div class="install-method">
+                <h3>Option C: Standalone bash</h3>
+<pre><span class="comment"># Clone and set up</span>
+<span class="cmd">git clone https://github.com/matteoscurati/ai-consultants.git</span>
+<span class="cmd">cd ai-consultants</span>
+<span class="cmd">./scripts/doctor.sh --fix</span>
+
+<span class="comment"># Run a consultation</span>
+<span class="cmd">./scripts/consult_all.sh "How should I structure my auth system?"</span></pre>
+            </div>
+        </div>
+        <div class="agents-note">
+            Works with Claude Code, Codex CLI, Gemini CLI, Cursor, Copilot, Windsurf (via SkillPort), Aider (via AGENTS.md), Amp, Kimi, and standalone bash.
+        </div>
+    </div>
+</section>
+
+<!-- CONFIGURATION -->
+<section id="configuration">
+    <div class="container">
+        <div class="section-label">Configuration</div>
+        <h2>Presets and strategies</h2>
+
+        <div class="sub-heading">Presets</div>
+        <div class="table-wrapper">
+            <table class="config-table">
+                <thead>
+                    <tr>
+                        <th>Preset</th>
+                        <th>Consultants</th>
+                        <th>Use Case</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>max_quality</td><td>All + debate + reflection</td><td>Critical decisions</td></tr>
+                    <tr><td>medium</td><td>4 + light debate</td><td>General questions</td></tr>
+                    <tr><td>fast</td><td>2</td><td>Quick checks</td></tr>
+                    <tr><td>balanced</td><td>4 (Gemini, Codex, Mistral, Kilo)</td><td>Standard consultations</td></tr>
+                    <tr><td>high-stakes</td><td>All + debate</td><td>Critical decisions</td></tr>
+                    <tr><td>local</td><td>Ollama only</td><td>Full privacy</td></tr>
+                    <tr><td>security</td><td>Security-focused + debate</td><td>Security reviews</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="sub-heading">Synthesis Strategies</div>
+        <div class="table-wrapper">
+            <table class="config-table">
+                <thead>
+                    <tr>
+                        <th>Strategy</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>majority</td><td>Most common answer wins (default)</td></tr>
+                    <tr><td>risk_averse</td><td>Weight conservative responses higher</td></tr>
+                    <tr><td>security_first</td><td>Prioritize security considerations</td></tr>
+                    <tr><td>cost_capped</td><td>Prefer simpler, cheaper solutions</td></tr>
+                    <tr><td>compare_only</td><td>No recommendation, just comparison</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="sub-heading">Key Environment Variables</div>
+<pre><span class="comment"># Core features</span>
+<span class="cmd">ENABLE_DEBATE=true</span>           <span class="comment"># Multi-agent debate</span>
+<span class="cmd">ENABLE_SYNTHESIS=true</span>        <span class="comment"># Automatic synthesis</span>
+<span class="cmd">ENABLE_SMART_ROUTING=true</span>    <span class="comment"># Intelligent consultant selection</span>
+<span class="cmd">ENABLE_PANIC_MODE=auto</span>       <span class="comment"># Automatic rigor for uncertainty</span>
+
+<span class="comment"># Defaults</span>
+<span class="cmd">DEFAULT_PRESET=balanced</span>
+<span class="cmd">DEFAULT_STRATEGY=majority</span>
+
+<span class="comment"># Ollama (local models)</span>
+<span class="cmd">ENABLE_OLLAMA=true</span>
+<span class="cmd">OLLAMA_MODEL=qwen2.5-coder:32b</span>
+
+<span class="comment"># Cost management</span>
+<span class="cmd">MAX_SESSION_COST=1.00</span>        <span class="comment"># Budget limit in USD</span>
+<span class="cmd">WARN_AT_COST=0.50</span></pre>
+    </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+    <div class="container footer-inner">
+        <ul class="footer-links">
+            <li><a href="https://github.com/matteoscurati/ai-consultants" target="_blank" rel="noopener">GitHub</a></li>
+            <li><a href="https://www.npmjs.com/package/ai-consultants" target="_blank" rel="noopener">npm</a></li>
+            <li><a href="https://github.com/matteoscurati/ai-consultants/blob/main/LICENSE" target="_blank" rel="noopener">MIT License</a></li>
+        </ul>
+        <div class="footer-credit">
+            Built by <a href="https://github.com/matteoscurati" target="_blank" rel="noopener">Matteo Scurati</a> &middot; &copy; 2026
+        </div>
+    </div>
+</footer>
+
+<!-- TOAST -->
+<div class="toast" id="toast">Copied to clipboard</div>
+
+<script>
+function closeMenu() {
+    document.querySelector('.nav-links').classList.remove('open');
+}
+
+function copyNpx() {
+    navigator.clipboard.writeText('npx ai-consultants').then(function() {
+        var toast = document.getElementById('toast');
+        toast.classList.add('show');
+        setTimeout(function() { toast.classList.remove('show'); }, 2000);
+    });
+}
+
+document.querySelectorAll('a[href^="#"]').forEach(function(anchor) {
+    anchor.addEventListener('click', function(e) {
+        e.preventDefault();
+        var target = document.querySelector(this.getAttribute('href'));
+        if (target) target.scrollIntoView({ behavior: 'smooth' });
+    });
+});
+</script>
+
+</body>
+</html>
