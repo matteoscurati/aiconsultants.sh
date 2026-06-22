@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Consultants — Query 15 AI models simultaneously</title>
-    <meta name="description" content="A council of AI experts for every coding decision. Query 15 AI models simultaneously, get weighted synthesis, and multi-agent debate.">
+    <title>AI Consultants — a harness for every question</title>
+    <meta name="description" content="A harness for every question. A panel of 15 frontier models that picks its own deliberation strategy per question — converging, cross-examining, and competing until the answer holds up.">
 
     <!-- SEO -->
     <link rel="canonical" href="https://aiconsultants.sh/">
@@ -15,14 +15,14 @@
     <!-- Open Graph -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://aiconsultants.sh/">
-    <meta property="og:title" content="AI Consultants — Query 15 AI models simultaneously">
-    <meta property="og:description" content="A council of AI experts for every coding decision. Get diverse perspectives, weighted synthesis, and multi-agent debate.">
+    <meta property="og:title" content="AI Consultants — a harness for every question">
+    <meta property="og:description" content="A panel of 15 frontier models that writes its own playbook per question — fan out, debate to convergence, adversarial review, or tournament — and checks its work before it reaches you.">
     <meta property="og:site_name" content="AI Consultants">
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="AI Consultants — Query 15 AI models simultaneously">
-    <meta name="twitter:description" content="A council of AI experts for every coding decision. Get diverse perspectives, weighted synthesis, and multi-agent debate.">
+    <meta name="twitter:title" content="AI Consultants — a harness for every question">
+    <meta name="twitter:description" content="A panel of 15 frontier models that picks its own deliberation strategy per question — converging, cross-examining, and competing until the answer holds up.">
 
     <!-- JSON-LD Structured Data -->
     <script type="application/ld+json">
@@ -32,8 +32,8 @@
         "name": "AI Consultants",
         "applicationCategory": "DeveloperApplication",
         "operatingSystem": "macOS, Linux, Windows (WSL)",
-        "description": "Query 15 AI models simultaneously. Get diverse perspectives, weighted synthesis, and multi-agent debate for your coding decisions.",
-        "softwareVersion": "2.15.1",
+        "description": "A harness for every question. A panel of 15 frontier models that picks its own deliberation strategy per question — fan out, debate to convergence, adversarial review, or tournament — and checks its work before it reaches you.",
+        "softwareVersion": "2.16.0",
         "license": "https://opensource.org/licenses/MIT",
         "url": "https://aiconsultants.sh",
         "author": {
@@ -608,11 +608,11 @@
     <div class="container">
         <div class="hero-badges">
             <span class="badge">Claude Code Skill</span>
-            <span class="badge">v2.15.1</span>
+            <span class="badge">v2.16.0</span>
             <span class="badge">MIT License</span>
         </div>
         <h1>AI Consultants</h1>
-        <p class="hero-tagline">Query 15 AI models simultaneously. Get diverse perspectives, weighted synthesis, and multi-agent debate for your coding decisions.</p>
+        <p class="hero-tagline">A harness for every question. A panel of 15 frontier models that writes its own playbook per question &mdash; fan out, debate to convergence, cross-examine under adversarial review, or run a tournament &mdash; and checks its work before it reaches you.</p>
         <div class="hero-ctas">
             <a href="https://github.com/matteoscurati/ai-consultants" class="btn" target="_blank" rel="noopener">View on GitHub <span class="arrow">&rarr;</span></a>
             <a href="https://www.npmjs.com/package/ai-consultants" class="btn" target="_blank" rel="noopener">npm <span class="arrow">&rarr;</span></a>
@@ -628,11 +628,11 @@
 <section id="what">
     <div class="container">
         <div class="section-label">What it does</div>
-        <h2>A council of AI experts for every coding decision</h2>
+        <h2>Not a fixed pipeline. A dynamic deliberation engine.</h2>
         <div class="what-text">
-            <p>AI Consultants is a multi-model deliberation system. Instead of relying on a single AI for coding advice, it queries up to 15 different AI models in parallel &mdash; each with a unique persona and focus area.</p>
-            <p>Every consultant provides a confidence-scored response. The system then synthesizes all perspectives into a weighted recommendation, highlights points of agreement and disagreement, and optionally runs multi-round debates where consultants critique each other's positions.</p>
-            <p>The result: better decisions through cognitive diversity. When 12 out of 15 models agree, you can move fast. When they disagree, you know exactly where the risks are.</p>
+            <p>AI Consultants convenes a panel of up to 15 frontier models &mdash; each with a distinct persona &mdash; and, crucially, <strong>decides how they should deliberate for the question in front of them.</strong> It classifies the question, picks an orchestration <em>shape</em>, and iterates until the answers converge: the way a workflow builds a harness for the task at hand.</p>
+            <p>Simple questions get a quick read. Hard ones loop through debate until the panel converges. Security questions are stress-tested by an adversarial gate that tries to refute the leading answer. &ldquo;Which approach?&rdquo; runs a tournament and crowns a winner. The process fits the problem &mdash; it isn&rsquo;t hardcoded.</p>
+            <p>The result: one recommendation that <strong>survived scrutiny</strong>, with the points of agreement, the dissent, and the path it took to get there all on the table.</p>
         </div>
     </div>
 </section>
@@ -679,6 +679,11 @@
                 <h3>Token-Efficient Context</h3>
                 <p>Share large files without burning the consultants' context window. AST-based skeleton extraction, category-aware project tree, and <code>PRIMARY</code>/<code>CONTEXT</code> relevance tags let you point the panel at what matters.</p>
             </div>
+            <div class="feature-card">
+                <div class="feature-icon">08</div>
+                <h3>Dynamic Orchestration</h3>
+                <p>A planner picks how the panel deliberates per question &mdash; a convergence loop that iterates until answers agree, an adversarial refutation gate for security, a tournament to pick one winner, or an exhaustive sweep. Not a fixed script.</p>
+            </div>
         </div>
     </div>
 </section>
@@ -689,45 +694,43 @@
         <div class="section-label">How it works</div>
         <h2>From question to recommendation</h2>
         <div class="pipeline">
-            <span class="pipeline-step">Query</span>
-            <span class="pipeline-arrow">&rarr;</span>
             <span class="pipeline-step">Classify</span>
             <span class="pipeline-arrow">&rarr;</span>
-            <span class="pipeline-step">Parallel Queries</span>
+            <span class="pipeline-step">Plan shape</span>
             <span class="pipeline-arrow">&rarr;</span>
-            <span class="pipeline-step">Vote</span>
+            <span class="pipeline-step">Fan out</span>
+            <span class="pipeline-arrow">&rarr;</span>
+            <span class="pipeline-step">Deliberate &amp; converge</span>
             <span class="pipeline-arrow">&rarr;</span>
             <span class="pipeline-step">Synthesize</span>
-            <span class="pipeline-arrow">&rarr;</span>
-            <span class="pipeline-step">Report</span>
         </div>
         <div class="steps">
             <div class="step">
                 <div class="step-num">01</div>
                 <div>
-                    <h3>Classify</h3>
-                    <p>Your question is analyzed and categorized &mdash; architecture, security, performance, code review, quick syntax &mdash; to determine which consultants are most relevant and what depth of analysis is needed.</p>
+                    <h3>Classify &amp; plan</h3>
+                    <p>Your question is categorized &mdash; architecture, security, performance, code review &mdash; and scored for complexity and intent. From that, the planner picks an orchestration <em>shape</em>: how the panel should deliberate this specific question.</p>
                 </div>
             </div>
             <div class="step">
                 <div class="step-num">02</div>
                 <div>
-                    <h3>Consult</h3>
-                    <p>Selected consultants are queried in parallel. Each responds with a structured JSON output including a summary, detailed analysis, pros/cons, and a confidence score from 1 to 10.</p>
+                    <h3>Fan out</h3>
+                    <p>The relevant consultants are queried in parallel. Each returns a structured response &mdash; summary, analysis, pros/cons, and a 1&ndash;10 confidence score &mdash; from its own persona and focus area.</p>
                 </div>
             </div>
             <div class="step">
                 <div class="step-num">03</div>
                 <div>
-                    <h3>Synthesize</h3>
-                    <p>All responses are aggregated. Consensus is calculated, confidence intervals computed, and a weighted recommendation is generated using your chosen synthesis strategy.</p>
+                    <h3>Deliberate to convergence</h3>
+                    <p>The chosen shape takes over. <strong>Converge</strong> loops debate rounds until the panel agrees (not a fixed count). <strong>Adversarial</strong> sends the leading answer through a refutation gate. <strong>Tournament</strong> pits approaches head-to-head. <strong>Exhaustive</strong> keeps probing until no new angle appears.</p>
                 </div>
             </div>
             <div class="step">
                 <div class="step-num">04</div>
                 <div>
-                    <h3>Debate</h3>
-                    <p>Optionally, consultants enter a multi-round debate. They critique each other's positions, update their confidence scores, and converge (or diverge) on a recommendation. Panic mode triggers extra rigor when uncertainty is high.</p>
+                    <h3>Synthesize</h3>
+                    <p>Consensus is scored, confidence intervals computed, and one weighted recommendation is produced &mdash; with the dissent and the convergence path it took, so you see not just the answer but how much to trust it.</p>
                 </div>
             </div>
         </div>
