@@ -33,7 +33,7 @@
         "applicationCategory": "DeveloperApplication",
         "operatingSystem": "macOS, Linux, Windows (WSL)",
         "description": "A harness for every question. A panel of 15 frontier models that picks its own deliberation strategy per question — fan out, debate to convergence, adversarial review, or tournament — and checks its work before it reaches you.",
-        "softwareVersion": "2.20.0",
+        "softwareVersion": "2.21.0",
         "license": "https://opensource.org/licenses/MIT",
         "url": "https://aiconsultants.sh",
         "author": {
@@ -603,7 +603,7 @@
     <div class="container">
         <div class="hero-badges">
             <span class="badge">Claude Code Skill</span>
-            <span class="badge">v2.20.0</span>
+            <span class="badge">v2.21.0</span>
             <span class="badge">MIT License</span>
         </div>
         <h1>AI Consultants</h1>
@@ -745,7 +745,7 @@
         <p class="section-desc">Each consultant has a distinct persona that shapes their analysis. The invoking agent is automatically excluded to prevent self-consultation.</p>
 
         <div class="consultant-group">
-            <div class="group-label">CLI-Based &mdash; 9 consultants</div>
+            <div class="group-label">CLI-Based &mdash; 11 consultants</div>
             <div class="consultant-grid">
                 <div class="consultant-card">
                     <div>
@@ -810,12 +810,6 @@
                     </div>
                     <div class="consultant-focus">Big picture, synthesis</div>
                 </div>
-            </div>
-        </div>
-
-        <div class="consultant-group">
-            <div class="group-label">API-Based &mdash; 5 consultants</div>
-            <div class="consultant-grid">
                 <div class="consultant-card">
                     <div>
                         <div class="consultant-name">Qwen3</div>
@@ -823,6 +817,19 @@
                     </div>
                     <div class="consultant-focus">Data-driven, metrics</div>
                 </div>
+                <div class="consultant-card">
+                    <div>
+                        <div class="consultant-name">MiniMax</div>
+                        <div class="consultant-persona">The Pragmatic Optimizer</div>
+                    </div>
+                    <div class="consultant-focus">Performance, efficiency</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="consultant-group">
+            <div class="group-label">API-Based &mdash; 3 consultants</div>
+            <div class="consultant-grid">
                 <div class="consultant-card">
                     <div>
                         <div class="consultant-name">GLM</div>
@@ -843,13 +850,6 @@
                         <div class="consultant-persona">The Code Specialist</div>
                     </div>
                     <div class="consultant-focus">Algorithms, code gen</div>
-                </div>
-                <div class="consultant-card">
-                    <div>
-                        <div class="consultant-name">MiniMax</div>
-                        <div class="consultant-persona">The Pragmatic Optimizer</div>
-                    </div>
-                    <div class="consultant-focus">Performance, efficiency</div>
                 </div>
             </div>
         </div>
@@ -893,7 +893,10 @@
 <span class="cmd">npx ai-consultants doctor --fix</span>
 
 <span class="comment"># Install slash commands for Claude Code</span>
-<span class="cmd">npx ai-consultants install</span></pre>
+<span class="cmd">npx ai-consultants install</span>
+
+<span class="comment"># Keep the consultant CLIs up to date (v2.21)</span>
+<span class="cmd">npx ai-consultants update-clis</span></pre>
             </div>
             <div class="install-method">
                 <h3>Option B: Claude Code skill (curl | bash)</h3>
@@ -937,13 +940,16 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr><td>max_quality</td><td>All + debate + reflection</td><td>Critical decisions</td></tr>
-                    <tr><td>medium</td><td>4 + light debate</td><td>General questions</td></tr>
-                    <tr><td>fast</td><td>2</td><td>Quick checks</td></tr>
-                    <tr><td>balanced</td><td>4 (Gemini, Codex, Mistral, Kilo)</td><td>Standard consultations</td></tr>
-                    <tr><td>high-stakes</td><td>All + debate</td><td>Critical decisions</td></tr>
-                    <tr><td>local</td><td>Ollama only</td><td>Full privacy</td></tr>
+                    <tr><td>minimal</td><td>2 (Gemini + Codex)</td><td>Fast, cheap</td></tr>
+                    <tr><td>fast</td><td>2 + economy models, no debate</td><td>Quick checks</td></tr>
+                    <tr><td>balanced</td><td>4 (Gemini, Codex, Mistral, Kilo)</td><td>Standard consultations [default]</td></tr>
+                    <tr><td>medium</td><td>4 + standard models + light debate</td><td>General questions</td></tr>
+                    <tr><td>thorough</td><td>5 (+ Cursor)</td><td>Comprehensive analysis</td></tr>
+                    <tr><td>cost-capped</td><td>Budget-conscious options</td><td>Minimal API costs</td></tr>
                     <tr><td>security</td><td>Security-focused + debate</td><td>Security reviews</td></tr>
+                    <tr><td>high-stakes</td><td>All + debate</td><td>Maximum rigor for critical decisions</td></tr>
+                    <tr><td>max_quality</td><td>All + premium models + debate + reflection</td><td>Critical decisions</td></tr>
+                    <tr><td>local</td><td>Ollama only</td><td>Full privacy, no API calls</td></tr>
                 </tbody>
             </table>
         </div>
@@ -973,6 +979,7 @@
 <span class="cmd">ENABLE_SYNTHESIS=true</span>        <span class="comment"># Automatic synthesis</span>
 <span class="cmd">ENABLE_SMART_ROUTING=true</span>    <span class="comment"># Intelligent consultant selection</span>
 <span class="cmd">ENABLE_PANIC_MODE=auto</span>       <span class="comment"># Automatic rigor for uncertainty</span>
+<span class="cmd">ENABLE_STANCE_CONSENSUS=true</span> <span class="comment"># Exact-match stance consensus (v2.21, opt-in)</span>
 
 <span class="comment"># Defaults</span>
 <span class="cmd">DEFAULT_PRESET=balanced</span>
@@ -980,7 +987,7 @@
 
 <span class="comment"># Ollama (local models)</span>
 <span class="cmd">ENABLE_OLLAMA=true</span>
-<span class="cmd">OLLAMA_MODEL=qwen2.5-coder:32b</span>
+<span class="cmd">OLLAMA_MODEL=hf.co/prithivMLmods/VibeThinker-3B-GGUF</span>
 
 <span class="comment"># Cost management</span>
 <span class="cmd">MAX_SESSION_COST=1.00</span>        <span class="comment"># Budget limit in USD</span>
