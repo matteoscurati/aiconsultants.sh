@@ -1110,7 +1110,24 @@
     <div class="container">
         <div class="section-label">Configuration</div>
         <h2>The control surface</h2>
-        <p class="section-desc">Presets choose the panel. Strategies decide how answers are combined. Environment variables control how far the deliberation runs and when it must stop.</p>
+        <p class="section-desc">The automatic configurator detects the complete panel and preserves existing credentials. Presets choose the panel, strategies combine its answers, and every persistent parameter remains directly addressable.</p>
+
+        <div class="sub-heading">Automatic configuration</div>
+<pre><span class="comment"># Not on npm yet — clone the repo first (Option C above), then run</span>
+<span class="comment"># Detect installed CLIs and API credentials, then save an XDG config</span>
+<span class="cmd">./scripts/configure.sh</span>
+
+<span class="comment"># Repeatable configuration for a convergent architecture review</span>
+<span class="cmd">./scripts/configure.sh \</span>
+  <span class="cmd">--set DEFAULT_PRESET=balanced \</span>
+  <span class="cmd">--set ENABLE_DEBATE=true \</span>
+  <span class="cmd">--set ORCHESTRATION_MODE=converge</span>
+
+<span class="comment"># Guided setup, exhaustive review, and parameter discovery</span>
+<span class="cmd">./scripts/configure.sh --interactive</span>
+<span class="cmd">./scripts/configure.sh --advanced</span>
+<span class="cmd">./scripts/configure.sh --show-parameters</span>
+<span class="cmd">./scripts/configure.sh --dry-run</span></pre>
 
         <div class="sub-heading">Presets</div>
         <div class="table-wrapper">
