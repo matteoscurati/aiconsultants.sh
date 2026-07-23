@@ -4,25 +4,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Consultants — a harness for every question</title>
-    <meta name="description" content="A harness for every question. A panel of 11 frontier models, now including Kimi K3, that can fan out, debate to convergence, run adversarial review, or compare approaches under a budget.">
+    <meta name="description" content="A harness for every question. A panel of up to 11 frontier models, now including Kimi K3, fans out in parallel and returns the coverage synthesis — the union of what they collectively see, under health gates and hard budgets.">
 
     <!-- SEO -->
     <link rel="canonical" href="https://aiconsultants.sh/">
     <meta name="robots" content="index, follow">
     <meta name="author" content="Matteo Scurati">
-    <meta name="keywords" content="AI consultants, multi-model, AI debate, coding assistant, Claude Code skill, Gemini, Codex, Mistral, npx ai-consultants">
+    <meta name="keywords" content="AI consultants, multi-model, coverage synthesis, coding assistant, Claude Code skill, Gemini, Codex, Mistral, npx ai-consultants">
 
     <!-- Open Graph -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://aiconsultants.sh/">
     <meta property="og:title" content="AI Consultants — a harness for every question">
-    <meta property="og:description" content="A panel of 11 frontier models with executable recipes for convergence, adversarial review, tournaments, audits, health gates, and hard budgets.">
+    <meta property="og:description" content="A panel of up to 11 frontier models with executable recipes for coverage synthesis, cost-capped audits, health gates, and hard budgets.">
     <meta property="og:site_name" content="AI Consultants">
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="AI Consultants — a harness for every question">
-    <meta name="twitter:description" content="A panel of 11 frontier models with executable recipes for convergence, adversarial review, tournaments, audits, health gates, and hard budgets.">
+    <meta name="twitter:description" content="A panel of up to 11 frontier models with executable recipes for coverage synthesis, cost-capped audits, health gates, and hard budgets.">
 
     <!-- JSON-LD Structured Data -->
     <script type="application/ld+json">
@@ -32,8 +32,8 @@
         "name": "AI Consultants",
         "applicationCategory": "DeveloperApplication",
         "operatingSystem": "macOS, Linux, Windows (WSL)",
-        "description": "A harness for every question. A panel of 11 frontier models, including Kimi K3, with configurable convergence, adversarial review, tournaments, audits, health gates, and budgets.",
-        "softwareVersion": "2.25.2",
+        "description": "A harness for every question. A panel of up to 11 frontier models, including Kimi K3, that fans out in parallel and returns the coverage synthesis, with health gates and budgets.",
+        "softwareVersion": "3.0.0",
         "license": "https://opensource.org/licenses/MIT",
         "url": "https://aiconsultants.sh",
         "author": {
@@ -693,12 +693,12 @@
     <div class="container">
         <div class="hero-badges">
             <span class="badge">Claude Code Skill</span>
-            <span class="badge">v2.25.2</span>
+            <span class="badge">v3.0.0</span>
             <span class="badge">Kimi K3</span>
             <span class="badge">MIT License</span>
         </div>
         <h1>AI Consultants</h1>
-        <p class="hero-tagline">A harness for every question. A panel of 11 frontier models that writes its own playbook per question &mdash; fan out, debate to convergence, cross-examine under adversarial review, or run a tournament &mdash; and checks its work before it reaches you.</p>
+        <p class="hero-tagline">One model gives one guess. A cross-vendor panel of up to 11 frontier models fans out in parallel and gives you the union of what they all see &mdash; the risks, edge cases, and approaches a single model misses.</p>
         <div class="hero-ctas">
             <a href="https://github.com/matteoscurati/ai-consultants" class="btn" target="_blank" rel="noopener">View on GitHub <span class="arrow">&rarr;</span></a>
             <a href="https://www.npmjs.com/package/ai-consultants" class="btn" target="_blank" rel="noopener">npm <span class="arrow">&rarr;</span></a>
@@ -714,11 +714,11 @@
 <section id="what">
     <div class="container">
         <div class="section-label">What it does</div>
-        <h2>Not a fixed pipeline. A dynamic deliberation engine.</h2>
+        <h2>Coverage, not a single guess.</h2>
         <div class="what-text">
-            <p>AI Consultants convenes a panel of up to 11 frontier models &mdash; each with a distinct persona &mdash; and, crucially, <strong>decides how they should deliberate for the question in front of them.</strong> It classifies the question, picks an orchestration <em>shape</em>, and iterates until the answers converge: the way a workflow builds a harness for the task at hand.</p>
-            <p>Simple questions get a quick read. Hard ones loop through debate until the panel converges. Security questions are stress-tested by an adversarial gate that tries to refute the leading answer. &ldquo;Which approach?&rdquo; runs a tournament and crowns a winner. The process fits the problem &mdash; it isn&rsquo;t hardcoded.</p>
-            <p>The result: one recommendation that <strong>survived scrutiny</strong>, with the points of agreement, the dissent, and the path it took to get there all on the table.</p>
+            <p>AI Consultants convenes a panel of up to 11 frontier models &mdash; each with a distinct persona and a different vendor's blind spots &mdash; and fans your question out to all of them in parallel. <strong>No back-and-forth rounds, no voting on one answer.</strong> Every consultant answers once, independently.</p>
+            <p>Different model families miss different things. One model's blind spot is another's obvious flag. Fanning the question out and taking the union of what the panel collectively sees catches what any single model would have missed on its own.</p>
+            <p>The result: a <strong>coverage synthesis</strong> &mdash; the deduplicated union of every distinct point raised across the panel &mdash; so you see the full spread of risks, edge cases, and approaches, not just one model's take.</p>
         </div>
     </div>
 </section>
@@ -737,43 +737,28 @@
             </div>
             <div class="feature-card">
                 <div class="feature-icon">02</div>
-                <h3>Automatic Synthesis</h3>
-                <p>All responses are combined into a single weighted recommendation with confidence scoring and consensus analysis.</p>
+                <h3>Coverage Synthesis</h3>
+                <p>Every response is deduplicated and merged into the union of distinct points across the panel &mdash; the risks, edge cases, and approaches, not a single weighted recommendation.</p>
             </div>
             <div class="feature-card">
                 <div class="feature-icon">03</div>
-                <h3>Multi-Agent Debate</h3>
-                <p>Consultants critique each other across multiple rounds. Positions evolve. Anonymous peer review identifies the strongest arguments.</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">04</div>
                 <h3>Smart Routing</h3>
                 <p>Questions are classified by category and routed to the most relevant consultants. Security questions go to security experts first.</p>
             </div>
             <div class="feature-card">
-                <div class="feature-icon">05</div>
+                <div class="feature-icon">04</div>
                 <h3>Quality Tiers</h3>
                 <p>Premium, standard, and economy model tiers. Choose max_quality for critical decisions or fast for quick checks.</p>
             </div>
             <div class="feature-card">
-                <div class="feature-icon">06</div>
+                <div class="feature-icon">05</div>
                 <h3>Cost Control</h3>
                 <p>Budget enforcement, semantic caching, cost-aware routing, and response limits. Every figure states what it rests on &mdash; the provider&rsquo;s own token counts where they exist, a local estimate where they don&rsquo;t, and an explicit exclusion for credit-billed models.</p>
             </div>
             <div class="feature-card">
-                <div class="feature-icon">07</div>
+                <div class="feature-icon">06</div>
                 <h3>Token-Efficient Context</h3>
                 <p>Share large files without burning the consultants' context window. AST-based skeleton extraction, category-aware project tree, and <code>PRIMARY</code>/<code>CONTEXT</code> relevance tags let you point the panel at what matters.</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">08</div>
-                <h3>Dynamic Orchestration</h3>
-                <p>A planner picks how the panel deliberates per question &mdash; a convergence loop that iterates until answers agree, an adversarial refutation gate for security, a tournament to pick one winner, or an exhaustive sweep. Not a fixed script.</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">09</div>
-                <h3>Measured Roster</h3>
-                <p>The panel calibrates itself. An uncorrelated-value audit flags consultants that only echo the others, while blind peer-review and pairwise-judge Elo derive each model's intelligence, taste, and cost from real runs &mdash; not hand-tuned guesses.</p>
             </div>
         </div>
     </div>
@@ -783,45 +768,36 @@
 <section id="how-it-works">
     <div class="container">
         <div class="section-label">How it works</div>
-        <h2>From question to recommendation</h2>
+        <h2>From question to coverage</h2>
         <div class="pipeline">
             <span class="pipeline-step">Classify</span>
             <span class="pipeline-arrow">&rarr;</span>
-            <span class="pipeline-step">Plan shape</span>
+            <span class="pipeline-step">Route</span>
             <span class="pipeline-arrow">&rarr;</span>
             <span class="pipeline-step">Fan out</span>
             <span class="pipeline-arrow">&rarr;</span>
-            <span class="pipeline-step">Deliberate &amp; converge</span>
-            <span class="pipeline-arrow">&rarr;</span>
-            <span class="pipeline-step">Synthesize</span>
+            <span class="pipeline-step">Coverage synthesis</span>
         </div>
         <div class="steps">
             <div class="step">
                 <div class="step-num">01</div>
                 <div>
-                    <h3>Classify &amp; plan</h3>
-                    <p>Your question is categorized &mdash; architecture, security, performance, code review &mdash; and scored for complexity and intent. From that, the planner picks an orchestration <em>shape</em>: how the panel should deliberate this specific question.</p>
+                    <h3>Classify &amp; route</h3>
+                    <p>Your question is categorized &mdash; architecture, security, performance, code review &mdash; and scored for complexity and intent. From that, routing picks which consultants in the panel see this specific question.</p>
                 </div>
             </div>
             <div class="step">
                 <div class="step-num">02</div>
                 <div>
                     <h3>Fan out</h3>
-                    <p>The relevant consultants are queried in parallel. Each returns a structured response &mdash; summary, analysis, pros/cons, and a 1&ndash;10 confidence score &mdash; from its own persona and focus area.</p>
+                    <p>The relevant consultants are queried in parallel, independently. Each returns a structured response &mdash; summary, analysis, pros/cons, and a 1&ndash;10 confidence score &mdash; from its own persona and focus area.</p>
                 </div>
             </div>
             <div class="step">
                 <div class="step-num">03</div>
                 <div>
-                    <h3>Deliberate to convergence</h3>
-                    <p>The chosen shape takes over. <strong>Converge</strong> loops debate rounds until the panel agrees (not a fixed count). <strong>Adversarial</strong> sends the leading answer through a refutation gate. <strong>Tournament</strong> pits approaches head-to-head. <strong>Exhaustive</strong> keeps probing until no new angle appears.</p>
-                </div>
-            </div>
-            <div class="step">
-                <div class="step-num">04</div>
-                <div>
-                    <h3>Synthesize</h3>
-                    <p>Consensus is scored, confidence intervals computed, and one weighted recommendation is produced &mdash; with the dissent and the convergence path it took, so you see not just the answer but how much to trust it.</p>
+                    <h3>Coverage synthesis</h3>
+                    <p>Every response is deduplicated and merged into the union of distinct points across the panel &mdash; the risks, edge cases, and approaches any one model alone would have missed. Proven strongest on breadth questions; for a single-answer factual question, one strong model is usually enough.</p>
                 </div>
             </div>
         </div>
@@ -945,56 +921,11 @@
         <div class="recipe-grid">
             <article class="recipe-card">
                 <div class="recipe-card-header">
-                    <div class="recipe-meta"><span>Architecture</span><span class="recipe-shape">converge</span></div>
-                    <h3>Debate until the answer holds</h3>
-                    <p>Iterate until consensus reaches 75%, progress stalls, or four rounds have run.</p>
-                </div>
-<pre><span class="cmd">ENABLE_DEBATE=true \</span>
-<span class="cmd">ORCHESTRATION_MODE=converge \</span>
-<span class="cmd">CONVERGENCE_MAX_ROUNDS=4 \</span>
-<span class="cmd">CONVERGENCE_TARGET_CONSENSUS=75 \</span>
-<span class="cmd">ai-consultants --strategy risk_averse \</span>
-<span class="cmd">  "Event log or mutable state?"</span></pre>
-            </article>
-
-            <article class="recipe-card">
-                <div class="recipe-card-header">
-                    <div class="recipe-meta"><span>Benchmark</span><span class="recipe-shape">fixed</span></div>
-                    <h3>Run exactly two rounds</h3>
-                    <p>Make repeated evaluations comparable by disabling early debate optimization.</p>
-                </div>
-<pre><span class="cmd">ENABLE_DEBATE=true \</span>
-<span class="cmd">ORCHESTRATION_MODE=fixed \</span>
-<span class="cmd">DEBATE_ROUNDS=2 \</span>
-<span class="cmd">ENABLE_DEBATE_OPTIMIZATION=false \</span>
-<span class="cmd">ai-consultants "Review the migration" \</span>
-<span class="cmd">  docs/migration.md@PRIMARY</span></pre>
-            </article>
-
-            <article class="recipe-card">
-                <div class="recipe-card-header">
-                    <div class="recipe-meta"><span>Security</span><span class="recipe-shape">adversarial</span></div>
-                    <h3>Try to refute the leading answer</h3>
-                    <p>Force critique, anonymous peer review, and a security-first synthesis.</p>
-                </div>
-<pre><span class="cmd">ENABLE_DEBATE=true \</span>
-<span class="cmd">ORCHESTRATION_MODE=adversarial \</span>
-<span class="cmd">ENABLE_PEER_REVIEW=true \</span>
-<span class="cmd">ai-consultants --preset security \</span>
-<span class="cmd">  --strategy security_first \</span>
-<span class="cmd">  "Find authentication bypasses" \</span>
-<span class="cmd">  src/auth.ts@PRIMARY</span></pre>
-            </article>
-
-            <article class="recipe-card">
-                <div class="recipe-card-header">
-                    <div class="recipe-meta"><span>Choice</span><span class="recipe-shape">tournament</span></div>
+                    <div class="recipe-meta"><span>Choice</span><span class="recipe-shape">fan-out</span></div>
                     <h3>Compare two options. Pick one.</h3>
-                    <p>Converge on the trade-offs, then require the synthesis to declare a winner.</p>
+                    <p>Every consultant answers once in parallel, and the coverage synthesis lays out where they agree and where they don't &mdash; then names a winner.</p>
                 </div>
-<pre><span class="cmd">ENABLE_DEBATE=true \</span>
-<span class="cmd">ORCHESTRATION_MODE=tournament \</span>
-<span class="cmd">ai-consultants --strategy majority \</span>
+<pre><span class="cmd">ai-consultants --strategy majority \</span>
 <span class="cmd">  "Choose REST or GraphQL for this API \</span>
 <span class="cmd">  and justify one winner"</span>
 
@@ -1045,8 +976,8 @@
         </div>
 
         <div class="recipe-more">
-            <span>Also covered: exhaustive audits, CLI-only mode, hybrid API panels, exact semantic consensus, large prompts, and tagged file context.</span>
-            <a href="https://github.com/matteoscurati/ai-consultants/blob/main/docs/RECIPES.md" target="_blank" rel="noopener">Open all 13 recipes &rarr;</a>
+            <span>Also covered: CLI-only mode, hybrid API panels, large prompts, and tagged file context.</span>
+            <a href="https://github.com/matteoscurati/ai-consultants/blob/main/docs/RECIPES.md" target="_blank" rel="noopener">Open the full recipes reference &rarr;</a>
         </div>
     </div>
 </section>
@@ -1119,11 +1050,10 @@
 <pre><span class="comment"># Detect installed CLIs and API credentials, then save an XDG config</span>
 <span class="cmd">npx ai-consultants configure</span>
 
-<span class="comment"># Repeatable configuration for a convergent architecture review</span>
+<span class="comment"># Repeatable configuration for a coverage-focused architecture review</span>
 <span class="cmd">npx ai-consultants configure \</span>
   <span class="cmd">--set DEFAULT_PRESET=balanced \</span>
-  <span class="cmd">--set ENABLE_DEBATE=true \</span>
-  <span class="cmd">--set ORCHESTRATION_MODE=converge</span>
+  <span class="cmd">--set DEFAULT_STRATEGY=coverage</span>
 
 <span class="comment"># Guided setup, exhaustive review, and parameter discovery</span>
 <span class="cmd">npx ai-consultants configure --interactive</span>
@@ -1148,9 +1078,9 @@
                     <tr><td>medium</td><td>4 + standard models</td><td>General questions</td></tr>
                     <tr><td>thorough</td><td>4</td><td>Comprehensive analysis</td></tr>
                     <tr><td>cost-capped</td><td>3 + budget cap</td><td>Minimal API costs</td></tr>
-                    <tr><td>security</td><td>4 + forced critique</td><td>Security reviews</td></tr>
-                    <tr><td>high-stakes</td><td>5 of 11 + debate</td><td>Maximum rigor for critical decisions</td></tr>
-                    <tr><td>max_quality</td><td>8 of 11 + premium models + peer review</td><td>Critical decisions</td></tr>
+                    <tr><td>security</td><td>4 + security-first routing</td><td>Security reviews</td></tr>
+                    <tr><td>high-stakes</td><td>5 of 11</td><td>Maximum rigor for critical decisions</td></tr>
+                    <tr><td>max_quality</td><td>8 of 11 + premium models</td><td>Critical decisions</td></tr>
                 </tbody>
             </table>
         </div>
@@ -1165,7 +1095,8 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr><td>majority</td><td>Most common answer wins (default)</td></tr>
+                    <tr><td>coverage</td><td>Deduplicated union of every distinct point across the panel (default)</td></tr>
+                    <tr><td>majority</td><td>Most common answer wins</td></tr>
                     <tr><td>risk_averse</td><td>Weight conservative responses higher</td></tr>
                     <tr><td>security_first</td><td>Prioritize security considerations</td></tr>
                     <tr><td>cost_capped</td><td>Prefer simpler, cheaper solutions</td></tr>
@@ -1177,15 +1108,8 @@
         <div class="sub-heading">Key Environment Variables</div>
 <pre><span class="comment"># Panel and synthesis</span>
 <span class="cmd">DEFAULT_PRESET=balanced</span>       <span class="comment"># minimal | balanced | thorough | high-stakes | security | fast</span>
-<span class="cmd">DEFAULT_STRATEGY=majority</span>     <span class="comment"># majority | risk_averse | security_first | cost_capped | compare_only</span>
+<span class="cmd">DEFAULT_STRATEGY=coverage</span>     <span class="comment"># coverage | majority | risk_averse | security_first | cost_capped | compare_only</span>
 <span class="cmd">ENABLE_SYNTHESIS=true</span>
-
-<span class="comment"># Deliberation</span>
-<span class="cmd">ENABLE_DEBATE=true</span>
-<span class="cmd">ORCHESTRATION_MODE=auto</span>       <span class="comment"># auto | fixed | quick | converge | adversarial | tournament | exhaustive</span>
-<span class="cmd">CONVERGENCE_MAX_ROUNDS=4</span>
-<span class="cmd">CONVERGENCE_TARGET_CONSENSUS=75</span>
-<span class="cmd">ENABLE_DEBATE_OPTIMIZATION=true</span>
 
 <span class="comment"># Trust the panel size</span>
 <span class="cmd">ENABLE_HEALTH_GATE=false</span>     <span class="comment"># Adds one small live ping per selected consultant</span>
