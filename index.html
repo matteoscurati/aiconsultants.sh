@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Consultants — a harness for every question</title>
-    <meta name="description" content="A harness for every question. A panel of up to 10 frontier models fans out in parallel and returns the coverage synthesis — the union of what they collectively see, under health gates and hard budgets.">
+    <title>AI Consultants — pre-flight coverage review</title>
+    <meta name="description" content="A pre-flight coverage review before you ship. A cross-vendor panel finds the risks and edge cases one model misses, with locally audited source attribution.">
 
     <!-- SEO -->
     <link rel="canonical" href="https://aiconsultants.sh/">
@@ -15,14 +15,14 @@
     <!-- Open Graph -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://aiconsultants.sh/">
-    <meta property="og:title" content="AI Consultants — a harness for every question">
-    <meta property="og:description" content="A panel of up to 10 frontier models with executable recipes for coverage synthesis, cost-capped audits, health gates, and hard budgets.">
+    <meta property="og:title" content="AI Consultants — pre-flight coverage review">
+    <meta property="og:description" content="A cross-vendor pre-flight review with source-audited coverage, explicit integrity status, health gates, and hard budgets.">
     <meta property="og:site_name" content="AI Consultants">
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="AI Consultants — a harness for every question">
-    <meta name="twitter:description" content="A panel of up to 10 frontier models with executable recipes for coverage synthesis, cost-capped audits, health gates, and hard budgets.">
+    <meta name="twitter:title" content="AI Consultants — pre-flight coverage review">
+    <meta name="twitter:description" content="A cross-vendor pre-flight review with source-audited coverage, explicit integrity status, health gates, and hard budgets.">
 
     <!-- JSON-LD Structured Data -->
     <script type="application/ld+json">
@@ -32,8 +32,8 @@
         "name": "AI Consultants",
         "applicationCategory": "DeveloperApplication",
         "operatingSystem": "macOS, Linux, Windows (WSL)",
-        "description": "A harness for every question. A panel of up to 10 frontier models that fans out in parallel and returns the coverage synthesis, with health gates and budgets.",
-        "softwareVersion": "4.0.4",
+        "description": "A pre-flight coverage review before you ship. A cross-vendor panel returns source-audited coverage with explicit integrity, health gates, and budgets.",
+        "softwareVersion": "5.0.0",
         "license": "https://opensource.org/licenses/MIT",
         "url": "https://aiconsultants.sh",
         "author": {
@@ -693,12 +693,13 @@
     <div class="container">
         <div class="hero-badges">
             <span class="badge">Claude Code Skill</span>
-            <span class="badge">v4.0.4</span>
+            <span class="badge">v5.0.0</span>
+            <span class="badge">Pre-flight coverage review</span>
             <span class="badge">Kimi K3</span>
             <span class="badge">MIT License</span>
         </div>
         <h1>AI Consultants</h1>
-        <p class="hero-tagline">One model gives one guess. A cross-vendor panel of up to 10 frontier models fans out in parallel and gives you the union of what they all see &mdash; the risks, edge cases, and approaches a single model misses.</p>
+        <p class="hero-tagline">Run a pre-flight coverage review before you ship. A cross-vendor panel finds the risks, edge cases, and approaches one model misses &mdash; then locally audits which source findings made it into the synthesis.</p>
         <div class="hero-ctas">
             <a href="https://github.com/matteoscurati/ai-consultants" class="btn" target="_blank" rel="noopener">View on GitHub <span class="arrow">&rarr;</span></a>
             <a href="https://www.npmjs.com/package/ai-consultants" class="btn" target="_blank" rel="noopener">npm <span class="arrow">&rarr;</span></a>
@@ -714,11 +715,11 @@
 <section id="what">
     <div class="container">
         <div class="section-label">What it does</div>
-        <h2>Coverage, not a single guess.</h2>
+        <h2>A pre-flight coverage review, not another guess.</h2>
         <div class="what-text">
             <p>AI Consultants convenes a panel of up to 10 frontier models &mdash; each with a distinct persona and a different vendor's blind spots &mdash; and fans your question out to all of them in parallel. <strong>No back-and-forth rounds, no voting on one answer.</strong> Every consultant answers once, independently.</p>
             <p>Different model families miss different things. One model's blind spot is another's obvious flag. Fanning the question out and taking the union of what the panel collectively sees catches what any single model would have missed on its own.</p>
-            <p>The result: a <strong>coverage synthesis</strong> &mdash; the deduplicated union of every distinct point raised across the panel &mdash; so you see the full spread of risks, edge cases, and approaches, not just one model's take.</p>
+            <p>The result: a <strong>source-audited coverage synthesis</strong>. Every attributable item cites locally assigned finding IDs, and <code>coverage_integrity</code> tells you whether the union is complete, degraded, failed, or not applicable. No incomplete union gets to call itself comprehensive.</p>
         </div>
     </div>
 </section>
@@ -737,8 +738,8 @@
             </div>
             <div class="feature-card">
                 <div class="feature-icon">02</div>
-                <h3>Coverage Synthesis</h3>
-                <p>Every response is deduplicated and merged into the union of distinct points across the panel &mdash; the risks, edge cases, and approaches, not a single weighted recommendation.</p>
+                <h3>Auditable Coverage</h3>
+                <p>Coverage items cite local source IDs. Missing, duplicated, invented, non-normalizable, or truncated input is disclosed as <code>DEGRADED</code> or <code>FAILED</code>, never silently presented as complete.</p>
             </div>
             <div class="feature-card">
                 <div class="feature-icon">03</div>
@@ -768,7 +769,7 @@
 <section id="how-it-works">
     <div class="container">
         <div class="section-label">How it works</div>
-        <h2>From question to coverage</h2>
+        <h2>From change to pre-flight coverage</h2>
         <div class="pipeline">
             <span class="pipeline-step">Classify</span>
             <span class="pipeline-arrow">&rarr;</span>
@@ -796,8 +797,8 @@
             <div class="step">
                 <div class="step-num">03</div>
                 <div>
-                    <h3>Coverage synthesis</h3>
-                    <p>Every response is deduplicated and merged into the union of distinct points across the panel &mdash; the risks, edge cases, and approaches any one model alone would have missed. Proven strongest on breadth questions; for a single-answer factual question, one strong model is usually enough.</p>
+                    <h3>Synthesize &amp; audit</h3>
+                    <p>Normalized findings are deduplicated into a coverage union, each with local source IDs. A post-check compares expected and represented IDs before the report labels the result <code>MET</code>, <code>DEGRADED</code>, or <code>FAILED</code>.</p>
                 </div>
             </div>
         </div>
@@ -1037,7 +1038,7 @@
     <div class="container">
         <div class="section-label">Configuration</div>
         <h2>The control surface</h2>
-        <p class="section-desc">The automatic configurator detects the complete panel and preserves existing credentials. Presets choose the panel, strategies combine its answers, and every persistent parameter remains directly addressable.</p>
+        <p class="section-desc">Start with one of three public pre-flight modes. Presets still choose the panel, strategies combine its answers, and every persistent parameter remains directly addressable.</p>
 
         <div class="sub-heading">Automatic configuration</div>
 <pre><span class="comment"># Detect installed CLIs and API credentials, then save an XDG config</span>
@@ -1054,6 +1055,29 @@
 <span class="cmd">npx ai-consultants configure --show-parameters</span>
 <span class="cmd">npx ai-consultants configure --dry-run</span></pre>
 
+        <div class="sub-heading">Public modes</div>
+        <div class="table-wrapper">
+            <table class="config-table">
+                <thead>
+                    <tr>
+                        <th>Mode</th>
+                        <th>Preset</th>
+                        <th>Strategy</th>
+                        <th>Use Case</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>fast-check</td><td>fast</td><td>coverage</td><td>Quick economy pre-flight check</td></tr>
+                    <tr><td>coverage-review</td><td>balanced</td><td>coverage</td><td>General pre-flight coverage review</td></tr>
+                    <tr><td>max-coverage</td><td>max_quality</td><td>coverage</td><td>Broadest eligible maximum-quality review</td></tr>
+                </tbody>
+            </table>
+        </div>
+<pre><span class="comment"># Three public workflows; an explicit --strategy still wins</span>
+<span class="cmd">npx ai-consultants --mode fast-check "Check this before I ship"</span>
+<span class="cmd">npx ai-consultants --mode coverage-review "Review this change"</span>
+<span class="cmd">npx ai-consultants --mode max-coverage "Audit this critical release"</span></pre>
+
         <div class="sub-heading">Presets</div>
         <div class="table-wrapper">
             <table class="config-table">
@@ -1067,13 +1091,13 @@
                 <tbody>
                     <tr><td>minimal</td><td>2 (Gemini + Codex)</td><td>Fast, cheap</td></tr>
                     <tr><td>fast</td><td>2 + economy models</td><td>Quick checks</td></tr>
-                    <tr><td>balanced</td><td>3 (Gemini, Codex, Mistral)</td><td>Standard consultations [default]</td></tr>
+                    <tr><td>balanced</td><td>3 (Gemini, Codex, Mistral)</td><td>Standard consultations</td></tr>
                     <tr><td>medium</td><td>3 + standard models</td><td>General questions</td></tr>
                     <tr><td>thorough</td><td>3</td><td>Comprehensive analysis</td></tr>
                     <tr><td>cost-capped</td><td>3 + budget cap</td><td>Minimal API costs</td></tr>
                     <tr><td>security</td><td>3 + security-first routing</td><td>Security reviews</td></tr>
                     <tr><td>high-stakes</td><td>4 of 10</td><td>Maximum rigor for critical decisions</td></tr>
-                    <tr><td>max_quality</td><td>All 10 + maximum tier</td><td>Critical decisions</td></tr>
+                    <tr><td>max_quality</td><td>10 catalogued; 9 after canonical host exclusion</td><td>Critical decisions</td></tr>
                 </tbody>
             </table>
         </div>
@@ -1100,7 +1124,7 @@
 
         <div class="sub-heading">Key Environment Variables</div>
 <pre><span class="comment"># Panel and synthesis</span>
-<span class="cmd">DEFAULT_PRESET=balanced</span>       <span class="comment"># minimal | balanced | thorough | high-stakes | security | fast</span>
+<span class="comment"># DEFAULT_PRESET=balanced</span>     <span class="comment"># optional; unset keeps explicit ENABLE_* choices</span>
 <span class="cmd">DEFAULT_STRATEGY=coverage</span>     <span class="comment"># coverage | majority | risk_averse | security_first | cost_capped | compare_only</span>
 <span class="cmd">ENABLE_SYNTHESIS=true</span>
 
