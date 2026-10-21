@@ -3,37 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Consultants — pre-flight coverage review</title>
-    <meta name="description" content="A pre-flight coverage review before you ship. A cross-vendor panel finds the risks and edge cases one model misses, with locally audited source attribution.">
+    <title>ai-consultants: ask several AI models at once, get one merged list</title>
+    <meta name="description" content="Free open-source CLI: ask Gemini, GPT, Claude, Mistral and more the same coding question in parallel, get one merged list showing who raised each point.">
+    <meta name="theme-color" content="#0a0a0a">
 
     <!-- SEO -->
     <link rel="canonical" href="https://aiconsultants.sh/">
     <meta name="robots" content="index, follow">
     <meta name="author" content="Matteo Scurati">
-    <meta name="keywords" content="AI consultants, multi-model, coverage synthesis, coding assistant, Claude Code skill, Gemini, Codex, Mistral, npx ai-consultants">
+    <meta name="keywords" content="ai-consultants, multiple AI models, second opinion, design review, threat modeling, Claude Code skill, Codex, Gemini, Mistral, npx ai-consultants">
 
     <!-- Open Graph -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://aiconsultants.sh/">
-    <meta property="og:title" content="AI Consultants — pre-flight coverage review">
-    <meta property="og:description" content="A cross-vendor pre-flight review with source-audited coverage, explicit integrity status, health gates, and hard budgets.">
-    <meta property="og:site_name" content="AI Consultants">
+    <meta property="og:site_name" content="ai-consultants">
+    <meta property="og:title" content="Ask several AI models at once. Get one list of everything they raised.">
+    <meta property="og:description" content="One question, separate answers from models by different companies, one merged list that shows who raised what. Runs in your terminal or inside Claude Code and Codex.">
+    <meta property="og:image" content="https://aiconsultants.sh/og-image.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="A real ai-consultants run: one question, answers from Gemini, Codex and Mistral, and one merged list of risks and edge cases tagged with the models that raised each.">
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="AI Consultants — pre-flight coverage review">
-    <meta name="twitter:description" content="A cross-vendor pre-flight review with source-audited coverage, explicit integrity status, health gates, and hard budgets.">
+    <meta name="twitter:title" content="Ask several AI models at once. Get one list of everything they raised.">
+    <meta name="twitter:description" content="One question, separate answers from models by different companies, one merged list that shows who raised what. Runs in your terminal or inside Claude Code and Codex.">
+    <meta name="twitter:image" content="https://aiconsultants.sh/og-image.png">
+    <meta name="twitter:image:alt" content="A real ai-consultants run: one question, answers from Gemini, Codex and Mistral, and one merged list of risks and edge cases tagged with the models that raised each.">
 
-    <!-- JSON-LD Structured Data -->
+    <!-- JSON-LD Structured Data (softwareVersion is rewritten at release by sync_site.sh) -->
     <script type="application/ld+json">
     {
         "@context": "https://schema.org",
         "@type": "SoftwareApplication",
-        "name": "AI Consultants",
+        "name": "ai-consultants",
         "applicationCategory": "DeveloperApplication",
         "operatingSystem": "macOS, Linux, Windows (WSL)",
-        "description": "A pre-flight coverage review before you ship. A cross-vendor panel returns source-audited coverage with explicit integrity, health gates, and budgets.",
-        "softwareVersion": "5.3.0",
+        "description": "Free open-source CLI: ask Gemini, GPT, Claude, Mistral and more the same coding question in parallel, get one merged list showing who raised each point.",
+        "softwareVersion": "5.3.1",
         "license": "https://opensource.org/licenses/MIT",
         "url": "https://aiconsultants.sh",
         "author": {
@@ -51,9 +58,7 @@
     }
     </script>
 
-    <!-- Cloudflare Web Analytics (cookieless, no consent banner needed) -->
     <script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "05f2a7581fb14df5bde9216c9a5d8858"}'></script>
-    <!-- End Cloudflare Web Analytics -->
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -62,1126 +67,1108 @@
         *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
         :root {
+            color-scheme: dark;
             --bg: #0a0a0a;
             --bg-elevated: #111;
             --bg-card: #141414;
             --border: #222;
             --border-light: #2a2a2a;
+            --border-strong: #3a3a3a;
+            --border-bright: #e6e6e6;
             --text: #f0f0f0;
-            --text-secondary: #999;
-            --text-muted: #555;
-            --accent: #f0f0f0;
-            --font-body: 'Space Grotesk', sans-serif;
-            --font-mono: 'JetBrains Mono', monospace;
+            --text-body: #c8c8c8;
+            --text-secondary: #b0b0b0;
+            --text-muted: #9a9a9a;      /* was #555 (about 2.6:1); now about 7:1 on --bg */
+            --accent: #f5b544;          /* one meaning only: raised by only one model */
+            --font-body: 'Space Grotesk', system-ui, -apple-system, sans-serif;
+            --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+            --gutter: 24px;
         }
 
-        html { scroll-behavior: smooth; scroll-padding-top: 80px; }
+        html { scroll-behavior: smooth; scroll-padding-top: 80px; -webkit-text-size-adjust: 100%; }
 
         body {
             font-family: var(--font-body);
+            font-size: 16px;
             background: var(--bg);
-            color: var(--text);
+            color: var(--text-body);
             line-height: 1.6;
             -webkit-font-smoothing: antialiased;
+            overflow-wrap: break-word;
         }
 
-        .container { max-width: 960px; margin: 0 auto; padding: 0 24px; }
+        a { color: var(--text); text-underline-offset: 3px; }
+        strong { color: var(--text); font-weight: 600; }
+
+        code {
+            font-family: var(--font-mono);
+            font-size: 0.86em;
+            color: var(--text);
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            padding: 1px 5px;
+            overflow-wrap: anywhere;
+        }
+
+        :focus-visible { outline: 2px solid var(--text); outline-offset: 3px; }
+
+        .sr-only {
+            position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+            overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
+        }
+
+        .skip-link {
+            position: absolute; left: 16px; top: -48px; z-index: 300;
+            background: var(--text); color: var(--bg);
+            font-family: var(--font-mono); font-size: 13px;
+            padding: 8px 12px; text-decoration: none;
+        }
+        .skip-link:focus { top: 12px; }
+
+        .container { max-width: 1120px; margin: 0 auto; padding: 0 var(--gutter); }
+        .prose { max-width: 680px; }
 
         /* ——— NAV ——— */
-        nav {
-            position: sticky;
-            top: 0;
-            z-index: 100;
+        .site-nav {
+            position: sticky; top: 0; z-index: 100;
             background: rgba(10, 10, 10, 0.85);
+            -webkit-backdrop-filter: blur(12px);
             backdrop-filter: blur(12px);
             border-bottom: 1px solid var(--border);
         }
 
-        .nav-inner {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            height: 64px;
-        }
+        .nav-inner { display: flex; align-items: center; justify-content: space-between; height: 64px; }
 
-        .nav-logo {
+        .wordmark {
             font-family: var(--font-mono);
-            font-size: 15px;
-            font-weight: 500;
-            color: var(--text);
-            text-decoration: none;
+            font-size: 15px; font-weight: 500;
+            color: var(--text); text-decoration: none;
             letter-spacing: -0.02em;
         }
 
-        .nav-links { display: flex; gap: 32px; list-style: none; }
+        .nav-links { display: flex; align-items: center; gap: 28px; list-style: none; }
 
         .nav-links a {
             font-family: var(--font-mono);
             font-size: 13px;
             color: var(--text-secondary);
             text-decoration: none;
+            display: inline-flex; align-items: center; gap: 8px;
             transition: color 0.2s;
         }
-
         .nav-links a:hover { color: var(--text); }
+        .nav-links img { height: 20px; width: auto; display: block; }
 
-        .hamburger {
+        .menu-btn {
             display: none;
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 4px;
+            align-items: center; gap: 10px;
+            background: none; border: 1px solid var(--border-light);
+            color: var(--text); cursor: pointer;
+            font-family: var(--font-mono); font-size: 13px;
+            padding: 6px 10px;
         }
+        .menu-btn .bars { display: block; width: 16px; }
+        .menu-btn .bars span { display: block; height: 1.5px; background: var(--text); margin: 4px 0; }
 
-        .hamburger span {
-            display: block;
-            width: 20px;
-            height: 1.5px;
-            background: var(--text);
-            margin: 5px 0;
-            transition: all 0.3s;
-        }
-
-        /* ——— SECTION LABELS ——— */
+        /* ——— SHARED ——— */
         .section-label {
             font-family: var(--font-mono);
-            font-size: 11px;
-            font-weight: 500;
-            letter-spacing: 0.12em;
-            text-transform: uppercase;
+            font-size: 11px; font-weight: 500;
+            letter-spacing: 0.12em; text-transform: uppercase;
             color: var(--text-muted);
             margin-bottom: 16px;
         }
 
-        /* ——— HERO ——— */
-        .hero {
-            padding: 100px 0 80px;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .hero-badges {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            margin-bottom: 24px;
-        }
-
-        .badge {
-            font-family: var(--font-mono);
-            font-size: 12px;
-            font-weight: 500;
-            letter-spacing: 0.04em;
-            color: var(--text-secondary);
-            border: 1px solid var(--border-light);
-            padding: 5px 12px;
-        }
-
-        .hero h1 {
-            font-size: clamp(40px, 6vw, 64px);
-            font-weight: 700;
-            letter-spacing: -0.03em;
-            line-height: 1.1;
-            margin-bottom: 20px;
-        }
-
-        .hero-tagline {
-            font-size: clamp(16px, 2vw, 19px);
-            color: var(--text-secondary);
-            max-width: 600px;
-            line-height: 1.5;
-            margin-bottom: 40px;
-        }
-
-        .hero-ctas { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 32px; }
-
-        .btn {
-            font-family: var(--font-mono);
-            font-size: 14px;
-            padding: 12px 24px;
-            border: 1px solid var(--border-light);
-            background: transparent;
-            color: var(--text);
-            text-decoration: none;
-            transition: all 0.2s;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            cursor: pointer;
-        }
-
-        .btn:hover { border-color: var(--text-secondary); background: var(--bg-elevated); }
-
-        .btn .arrow { transition: transform 0.2s; }
-        .btn:hover .arrow { transform: translateX(3px); }
-
-        .btn-npx {
-            background: var(--bg-elevated);
-            color: var(--text-muted);
-            cursor: pointer;
-            user-select: all;
-            position: relative;
-        }
-
-        .btn-npx:hover { color: var(--text-secondary); }
-
-        .hero-agents {
-            font-family: var(--font-mono);
-            font-size: 12px;
-            color: var(--text-muted);
-            line-height: 1.8;
-        }
-
-        .hero-agents span { color: var(--text-secondary); }
-
-        /* ——— SECTIONS ——— */
-        section { padding: 80px 0; border-bottom: 1px solid var(--border); }
+        section { padding: 88px 0; border-bottom: 1px solid var(--border); }
 
         section h2 {
             font-size: clamp(28px, 4vw, 36px);
-            font-weight: 600;
-            letter-spacing: -0.02em;
+            font-weight: 600; letter-spacing: -0.02em; line-height: 1.2;
+            color: var(--text);
             margin-bottom: 24px;
         }
 
-        section p.section-desc {
-            font-size: 17px;
-            color: var(--text-secondary);
-            max-width: 600px;
-            line-height: 1.6;
-            margin-bottom: 48px;
+        .lead { font-size: 17px; color: var(--text-body); max-width: 680px; margin-bottom: 40px; }
+
+        /* Command block: real text, wraps instead of scrolling, own copy button */
+        .cmd {
+            display: flex; align-items: flex-start; gap: 12px;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-light);
+            padding: 12px 12px 12px 16px;
+            font-family: var(--font-mono); font-size: 13px; line-height: 1.6;
+            color: var(--text);
+        }
+        .cmd-line { flex: 1; min-width: 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+        .cmd code.cmd-line { background: none; border: 0; padding: 0; font-size: inherit; color: inherit; }
+        .prompt { color: var(--text-muted); user-select: none; -webkit-user-select: none; }
+
+        .copy {
+            flex: none;
+            font-family: var(--font-mono); font-size: 12px;
+            color: var(--text); background: transparent;
+            border: 1px solid var(--border-strong);
+            padding: 3px 10px; cursor: pointer;
+            transition: border-color 0.2s, background 0.2s;
+        }
+        .copy:hover { border-color: var(--text-muted); background: var(--bg-card); }
+
+        /* ——— HERO ——— */
+        .hero { padding: 56px 0 88px; border-bottom: 1px solid var(--border); }
+
+        .hero-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 48px; }
+
+        .eyebrow {
+            font-family: var(--font-mono);
+            font-size: 13px; color: var(--text-secondary);
+            margin-bottom: 16px; max-width: 46ch;
         }
 
-        /* ——— WHAT IT DOES ——— */
-        .what-text {
-            display: grid;
-            gap: 20px;
-            max-width: 640px;
+        .hero h1 {
+            font-size: clamp(30px, 7.6vw, 40px);
+            font-weight: 700; letter-spacing: -0.03em; line-height: 1.12;
+            color: var(--text);
+            margin-bottom: 20px;
         }
 
-        .what-text p {
-            font-size: 16px;
-            color: var(--text-secondary);
-            line-height: 1.7;
+        .subhead { font-size: 17px; color: var(--text-body); line-height: 1.6; margin-bottom: 28px; max-width: 60ch; }
+
+        .cta-label {
+            font-family: var(--font-mono);
+            font-size: 11px; font-weight: 500;
+            letter-spacing: 0.12em; text-transform: uppercase;
+            color: var(--text); margin-bottom: 10px;
         }
 
-        /* ——— FEATURE GRID ——— */
-        .feature-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 1px;
-            background: var(--border);
-            border: 1px solid var(--border);
-        }
-
-        .feature-card {
+        .cmd-hero {
             background: var(--bg);
-            padding: 32px;
+            border-color: var(--border-bright);
+            padding: 14px 14px 14px 18px;
+            font-size: 14px;
+            color: #fff;
+        }
+        .cmd-hero .copy {
+            background: var(--text); color: var(--bg);
+            border-color: var(--text); font-weight: 500;
+        }
+        .cmd-hero .copy:hover { background: #fff; }
+
+        .card-video { display: block; width: 100%; height: auto; background: #0a0a0a; border-bottom: 1px solid var(--border); }
+        .cmd-hero + .cmd-hero { margin-top: 8px; }
+        .cmd-hint { display: block; color: var(--text-muted); font-size: 12px; user-select: none; -webkit-user-select: none; }
+        .r-gloss { color: var(--text-secondary); font-size: 12px; font-weight: 400; }
+        .pins-note { display: none; }
+
+        .cta-notes { margin-top: 16px; display: grid; gap: 8px; max-width: 60ch; }
+        .cta-notes p { font-size: 14px; color: var(--text-secondary); line-height: 1.55; }
+
+        .quiet-link {
+            display: inline-block; margin-top: 20px;
+            font-family: var(--font-mono); font-size: 13px;
+            color: var(--text-secondary); text-decoration: none;
+            border-bottom: 1px solid var(--border-strong);
+            padding-bottom: 2px;
+        }
+        .quiet-link:hover { color: var(--text); border-color: var(--text-muted); }
+
+        /* Example card: selectable monospace text in a terminal frame */
+        .card {
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-light);
+            min-width: 0;
         }
 
-        .feature-card h3 {
-            font-size: 16px;
-            font-weight: 600;
+        .card-bar {
+            display: flex; align-items: center; gap: 6px;
+            height: 34px; padding: 0 14px;
+            border-bottom: 1px solid var(--border);
+        }
+        .card-bar i { width: 9px; height: 9px; border-radius: 50%; background: var(--border-strong); display: block; }
+
+        .card-body { padding: 22px 20px 20px; font-family: var(--font-mono); font-size: 13px; line-height: 1.65; }
+
+        .card-label {
+            font-size: 11px; font-weight: 500;
+            letter-spacing: 0.1em; text-transform: uppercase;
+            color: var(--text-muted);
             margin-bottom: 8px;
         }
 
-        .feature-card p {
-            font-size: 14px;
-            color: var(--text-secondary);
-            line-height: 1.6;
+        .card-label .fname { text-transform: none; letter-spacing: 0.02em; }
+        .card-cmd { color: var(--text); white-space: pre-wrap; overflow-wrap: anywhere; }
+        .card-note { color: var(--text-secondary); margin-top: 8px; font-size: 12.5px; }
+
+        .card-divider { border: 0; border-top: 1px dashed var(--border-strong); margin: 20px 0; }
+
+        .r-outcome { color: var(--text-body); }
+        .r-outcome b { color: var(--text); font-weight: 500; }
+        .r-head { color: var(--text); font-weight: 500; margin: 14px 0 8px; }
+
+        .r-list { list-style: none; display: grid; gap: 10px; }
+        .r-list li { display: grid; grid-template-columns: 14px minmax(0, 1fr); }
+        .r-list li::before { content: "-"; color: var(--text-muted); }
+        .kind { color: var(--text-muted); }
+        .point { color: var(--text-body); }
+        .by { color: var(--text-muted); white-space: nowrap; }
+        .by b { color: var(--text); font-weight: 500; }
+        .solo { color: var(--accent); }
+
+        .legend { margin-top: 16px; color: var(--text-secondary); font-size: 12.5px; }
+
+        .show-all {
+            margin-top: 14px;
+            font-family: var(--font-mono); font-size: 12px;
+            color: var(--text); background: none;
+            border: 1px solid var(--border-strong);
+            padding: 4px 10px; cursor: pointer;
         }
 
-        .feature-card .feature-icon {
-            font-family: var(--font-mono);
-            font-size: 12px;
-            color: var(--text-muted);
-            margin-bottom: 16px;
-            letter-spacing: 0.05em;
+        .card figcaption {
+            border-top: 1px solid var(--border);
+            padding: 12px 20px;
+            font-size: 13px; color: var(--text-muted); line-height: 1.5;
         }
 
-        /* ——— PIPELINE ——— */
+        /* Pins: desktop only, link the card to the How it works steps */
+        .pin { display: none; }
+
+        /* ——— HOW IT WORKS ——— */
         .pipeline {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            align-items: center;
-            margin-bottom: 48px;
-            font-family: var(--font-mono);
-            font-size: 13px;
-        }
-
-        .pipeline-step {
-            padding: 8px 16px;
-            border: 1px solid var(--border-light);
-            color: var(--text-secondary);
-        }
-
-        .pipeline-arrow { color: var(--text-muted); }
-
-        .steps { display: grid; gap: 32px; }
-
-        .step {
-            display: grid;
-            grid-template-columns: 40px 1fr;
-            gap: 16px;
-            align-items: start;
-        }
-
-        .step-num {
-            font-family: var(--font-mono);
-            font-size: 13px;
-            color: var(--text-muted);
-            padding-top: 2px;
-        }
-
-        .step h3 { font-size: 16px; font-weight: 600; margin-bottom: 6px; }
-        .step p { font-size: 14px; color: var(--text-secondary); line-height: 1.6; }
-
-        /* ——— CONSULTANT GRID ——— */
-        .consultant-group { margin-bottom: 40px; }
-        .consultant-group:last-child { margin-bottom: 0; }
-
-        .group-label {
-            font-family: var(--font-mono);
-            font-size: 11px;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            color: var(--text-muted);
-            margin-bottom: 16px;
-            padding-bottom: 8px;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .consultant-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 1px;
-            background: var(--border);
-            border: 1px solid var(--border);
-        }
-
-        .consultant-card {
-            background: var(--bg);
-            padding: 20px 24px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .consultant-name {
-            font-size: 15px;
-            font-weight: 500;
-        }
-
-        .consultant-persona {
-            font-family: var(--font-mono);
-            font-size: 12px;
-            color: var(--text-muted);
-        }
-
-        .consultant-focus {
-            font-size: 13px;
-            color: var(--text-secondary);
-            text-align: right;
-        }
-
-        /* ——— CODE BLOCKS ——— */
-        .install-methods { display: grid; gap: 32px; }
-
-        .install-method h3 {
-            font-family: var(--font-mono);
-            font-size: 13px;
-            font-weight: 500;
-            color: var(--text-secondary);
-            margin-bottom: 12px;
-        }
-
-        pre {
-            background: var(--bg-elevated);
-            border: 1px solid var(--border);
-            padding: 20px 24px;
-            overflow-x: auto;
-            font-family: var(--font-mono);
-            font-size: 13px;
-            line-height: 1.7;
-            color: var(--text-secondary);
-        }
-
-        pre .comment { color: var(--text-muted); }
-        pre .cmd { color: var(--text); }
-
-        /* ——— EXECUTABLE RECIPES ——— */
-        .recipe-intro {
-            display: grid;
-            grid-template-columns: minmax(0, 1.4fr) minmax(220px, 0.6fr);
-            gap: 32px;
-            align-items: end;
+            display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
             margin-bottom: 40px;
-        }
-
-        .recipe-intro p {
-            color: var(--text-secondary);
-            font-size: 16px;
-            max-width: 620px;
-        }
-
-        .recipe-legend {
-            font-family: var(--font-mono);
-            font-size: 11px;
-            line-height: 1.8;
-            color: var(--text-muted);
-            border-left: 1px solid var(--border-light);
-            padding-left: 20px;
-        }
-
-        .recipe-grid {
-            display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 1px;
-            background: var(--border);
-            border: 1px solid var(--border);
-        }
-
-        .recipe-card {
-            background: var(--bg);
-            min-width: 0;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .recipe-card-header {
-            padding: 24px 24px 20px;
-            min-height: 150px;
-        }
-
-        .recipe-meta {
-            display: flex;
-            justify-content: space-between;
-            gap: 16px;
-            margin-bottom: 18px;
-            font-family: var(--font-mono);
-            font-size: 10px;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            color: var(--text-muted);
-        }
-
-        .recipe-shape { color: var(--text-secondary); }
-        .recipe-card h3 { font-size: 18px; margin-bottom: 8px; }
-        .recipe-card p { color: var(--text-secondary); font-size: 13px; line-height: 1.6; }
-
-        .recipe-card pre {
-            border: 0;
-            border-top: 1px solid var(--border);
-            margin-top: auto;
-            min-height: 215px;
-            font-size: 11px;
-            line-height: 1.75;
-        }
-
-        .recipe-more {
-            margin-top: 28px;
-            display: flex;
-            justify-content: space-between;
-            gap: 24px;
-            align-items: center;
-            padding: 20px 24px;
-            border: 1px solid var(--border);
-            color: var(--text-secondary);
-            font-size: 14px;
-        }
-
-        .recipe-more a { color: var(--text); text-decoration: none; }
-        .recipe-more a:hover { text-decoration: underline; }
-
-        /* ——— TABLES ——— */
-        .config-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 14px;
-            margin-bottom: 32px;
-        }
-
-        .config-table th {
-            font-family: var(--font-mono);
-            font-size: 12px;
-            font-weight: 500;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            color: var(--text-muted);
-            text-align: left;
-            padding: 12px 16px;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .config-table td {
-            padding: 12px 16px;
-            border-bottom: 1px solid var(--border);
-            color: var(--text-secondary);
-        }
-
-        .config-table td:first-child {
-            font-family: var(--font-mono);
-            font-size: 13px;
-            color: var(--text);
-        }
-
-        .config-table tr:last-child td { border-bottom: none; }
-
-        .table-wrapper {
-            border: 1px solid var(--border);
-            overflow-x: auto;
-            margin-bottom: 32px;
-        }
-
-        .table-wrapper .config-table { margin-bottom: 0; }
-
-        /* ——— AGENTS NOTE ——— */
-        .agents-note {
-            font-family: var(--font-mono);
-            font-size: 12px;
-            color: var(--text-muted);
-            margin-top: 24px;
-            padding: 16px 20px;
-            border: 1px solid var(--border);
-            line-height: 1.7;
-        }
-
-        /* ——— FOOTER ——— */
-        footer {
-            padding: 48px 0;
-            border-top: 1px solid var(--border);
-        }
-
-        .footer-inner {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 16px;
-        }
-
-        .footer-links {
-            display: flex;
-            gap: 24px;
+            font-family: var(--font-mono); font-size: 13px;
             list-style: none;
         }
+        .pipeline-step { padding: 8px 14px; border: 1px solid var(--border-light); color: var(--text); }
+        .pipeline-arrow { color: var(--text-muted); }
 
-        .footer-links a {
+        .diagram { display: none; margin: 0 0 48px; max-width: 720px; }
+        .diagram svg { width: 100%; height: auto; display: block; }
+        .diagram .box { fill: var(--bg-elevated); stroke: var(--border-strong); }
+        .diagram .line { fill: none; stroke: var(--border-strong); stroke-width: 1.5; }
+        .diagram .bar { stroke: var(--border-strong); stroke-width: 2; }
+        .diagram .skip { fill: none; stroke: var(--border-strong); stroke-dasharray: 5 4; }
+        .diagram text { font-family: var(--font-mono); font-size: 13px; fill: var(--text-body); }
+        .diagram text.strong { fill: var(--text); }
+        .diagram text.dim { fill: var(--text-muted); }
+
+        .steps { list-style: none; display: grid; gap: 32px; max-width: 720px; }
+        .step {
+            display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 12px;
+            padding: 4px 0 4px 12px; margin-left: -12px;
+            border-left: 2px solid transparent;
+            transition: border-color 0.2s;
+        }
+        .step.linked, .step:target { border-left-color: var(--text); }
+        .step-num { font-family: var(--font-mono); font-size: 13px; color: var(--text-muted); padding-top: 3px; }
+        .step h3 { font-size: 18px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+        .step p { font-size: 15px; color: var(--text-body); }
+
+        .footnote {
+            margin-top: 40px; max-width: 720px;
+            font-size: 14px; color: var(--text-secondary);
+            border-top: 1px solid var(--border); padding-top: 16px;
+        }
+
+        /* ——— WHEN ——— */
+        .when-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 40px; margin-bottom: 40px; }
+
+        .col-title {
             font-family: var(--font-mono);
-            font-size: 13px;
-            color: var(--text-secondary);
-            text-decoration: none;
-            transition: color 0.2s;
+            font-size: 12px; font-weight: 500;
+            letter-spacing: 0.12em; text-transform: uppercase;
+            color: var(--text);
+            padding-bottom: 10px; margin-bottom: 18px;
+            border-bottom: 1px solid var(--border);
         }
 
-        .footer-links a:hover { color: var(--text); }
+        .use-list, .skip-list { list-style: none; display: grid; gap: 18px; }
+        .use-list li, .skip-list li { position: relative; padding-left: 26px; font-size: 15px; }
+        .use-list li::before, .skip-list li::before {
+            position: absolute; left: 0; top: 0;
+            font-family: var(--font-mono); color: var(--text-secondary);
+        }
+        .use-list li::before { content: "\2713"; }
+        .skip-list li::before { content: "\2715"; }
+        .skip-list { gap: 14px; }
 
-        .footer-credit {
-            font-size: 13px;
+        .situation { display: block; color: var(--text); font-weight: 600; margin-bottom: 6px; }
+        .q {
+            display: inline-block;
+            font-family: var(--font-mono); font-size: 12.5px; line-height: 1.55;
+            color: var(--text-body);
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            padding: 4px 8px;
+            overflow-wrap: anywhere;
+        }
+        .q-extra { display: block; margin-top: 6px; color: var(--text-body); }
+
+        .measured { border: 1px solid var(--border-light); padding: 24px; }
+        .measured h3 { font-size: 16px; font-weight: 600; color: var(--text); margin-bottom: 8px; }
+        .measured p { font-size: 15px; color: var(--text-body); max-width: 860px; }
+
+        /* ——— WORKS WITH ——— */
+        .chip-row { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; margin-bottom: 28px; }
+        .row-label {
+            font-family: var(--font-mono);
+            font-size: 12px; font-weight: 500;
+            letter-spacing: 0.08em; text-transform: uppercase;
             color: var(--text-muted);
+            padding-top: 6px;
         }
+        .chips { list-style: none; display: flex; flex-wrap: wrap; gap: 8px; }
+        .chips li {
+            font-family: var(--font-mono); font-size: 13px; line-height: 1.5;
+            color: var(--text);
+            border: 1px solid var(--border-light);
+            padding: 5px 12px;
+        }
+        .works-note { max-width: 680px; font-size: 15px; color: var(--text-body); margin-top: 8px; }
+        .small-print { margin-top: 20px; font-size: 13px; color: var(--text-muted); }
 
-        .footer-credit a {
+        /* ——— BEFORE YOU RUN ——— */
+        .facts { display: grid; gap: 0; border-top: 1px solid var(--border); max-width: 900px; }
+        .fact { display: grid; grid-template-columns: minmax(0, 1fr); gap: 6px; padding: 24px 0; border-bottom: 1px solid var(--border); }
+        .fact dt {
+            font-family: var(--font-mono);
+            font-size: 12px; font-weight: 500;
+            letter-spacing: 0.1em; text-transform: uppercase;
+            color: var(--text);
+            padding-top: 3px;
+        }
+        .fact dd { font-size: 15px; color: var(--text-body); }
+        .tag {
+            display: inline-block;
+            font-family: var(--font-mono); font-size: 11px;
             color: var(--text-secondary);
-            text-decoration: none;
+            border: 1px solid var(--border-strong);
+            padding: 0 6px; margin: 0 2px;
+            vertical-align: 1px;
+            white-space: nowrap;
         }
 
-        .footer-credit a:hover { color: var(--text); }
+        /* ——— GET STARTED ——— */
+        .prereq { border: 1px solid var(--border-light); padding: 20px; margin-bottom: 32px; max-width: 820px; }
+        .box-label {
+            font-family: var(--font-mono);
+            font-size: 12px; font-weight: 500;
+            letter-spacing: 0.12em; text-transform: uppercase;
+            color: var(--text); margin-bottom: 12px;
+        }
+        .prereq > ul { list-style: none; display: grid; gap: 14px; }
+        .prereq > ul > li { font-size: 15px; color: var(--text-body); padding-left: 16px; position: relative; }
+        .prereq > ul > li::before { content: "-"; position: absolute; left: 0; color: var(--text-muted); }
+        .cli-list { display: grid; gap: 10px; margin-top: 12px; }
+        .cli-list > div { display: grid; grid-template-columns: minmax(0, 1fr); gap: 4px; }
+        .cli-list dt { font-family: var(--font-mono); font-size: 13px; color: var(--text); }
+        .cli-list dd { font-size: 14px; color: var(--text-secondary); }
+        .cli-list .cmd { padding: 6px 8px 6px 12px; font-size: 12.5px; margin-bottom: 4px; }
+        .cli-list .copy { padding: 1px 8px; }
+
+        .tabs { max-width: 820px; }
+        .tablist { display: flex; gap: 0; border-bottom: 1px solid var(--border-light); margin-bottom: 24px; flex-wrap: wrap; }
+        .tab {
+            font-family: var(--font-mono); font-size: 13px;
+            color: var(--text-secondary); background: none;
+            border: 0; border-bottom: 2px solid transparent;
+            padding: 10px 16px; margin-bottom: -1px;
+            cursor: pointer;
+        }
+        .tab[aria-selected="true"] { color: var(--text); border-bottom-color: var(--text); }
+        .tab:hover { color: var(--text); }
+        .no-js .tablist { display: none; }
+        .panel-title { display: none; }
+        .no-js .panel-title { display: block; font-family: var(--font-mono); font-size: 13px; color: var(--text); margin: 24px 0 12px; }
+
+        .setup-steps { list-style: none; display: grid; gap: 22px; }
+        .setup-steps li { display: grid; grid-template-columns: 28px minmax(0, 1fr); gap: 8px; }
+        .setup-n { font-family: var(--font-mono); font-size: 13px; color: var(--text-muted); padding-top: 13px; }
+        .setup-steps p, .panel-text { font-size: 14px; color: var(--text-secondary); margin-top: 8px; }
+        .cmd-stack { display: grid; gap: 10px; }
+        .panel-text.then { margin: 6px 0 0; color: var(--text-body); }
+
+        .warn {
+            max-width: 820px; margin-top: 32px;
+            border-left: 2px solid var(--text-muted);
+            padding: 4px 0 4px 16px;
+            font-size: 15px; color: var(--text-body);
+        }
+
+        .more-link {
+            display: inline-block; margin-top: 24px;
+            font-size: 15px; color: var(--text); text-decoration: none;
+            border-bottom: 1px solid var(--border-strong);
+        }
+        .more-link:hover { border-color: var(--text); }
+
+        /* ——— FAQ ——— */
+        .faq { max-width: 760px; border-top: 1px solid var(--border); }
+        .faq details { border-bottom: 1px solid var(--border); }
+        .faq summary {
+            cursor: pointer; list-style: none;
+            display: flex; justify-content: space-between; align-items: baseline; gap: 16px;
+            padding: 20px 0;
+            font-size: 17px; font-weight: 600; color: var(--text);
+        }
+        .faq summary::-webkit-details-marker { display: none; }
+        .faq summary::after { content: "+"; font-family: var(--font-mono); font-weight: 400; color: var(--text-secondary); }
+        .faq details[open] summary::after { content: "\2212"; }
+        .faq details p { padding: 0 0 22px; font-size: 15px; color: var(--text-body); }
+        .faq-more { margin-top: 28px; }
+
+        /* ——— FOOTER ——— */
+        footer { padding: 48px 0; }
+        .footer-lead { font-size: 15px; color: var(--text-body); margin-bottom: 24px; }
+        .footer-main { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: 24px; margin-bottom: 24px; }
+        .footer-links { display: flex; flex-wrap: wrap; gap: 10px 22px; list-style: none; max-width: 680px; }
+        .footer-links a {
+            font-family: var(--font-mono); font-size: 13px;
+            color: var(--text-secondary); text-decoration: none;
+        }
+        .footer-links a:hover { color: var(--text); }
+        .shields { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+        .shields a { display: inline-flex; }
+        .shields img { height: 20px; width: auto; display: block; }
+        .footer-fine { font-size: 13px; color: var(--text-muted); max-width: 820px; }
+        .footer-fine a { color: var(--text-secondary); }
+
+        /* ——— TOAST ——— */
+        .toast {
+            position: fixed; bottom: 24px; left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            width: max-content; max-width: calc(100vw - 32px);
+            font-family: var(--font-mono); font-size: 13px; line-height: 1.5;
+            color: var(--text); background: var(--bg-card);
+            border: 1px solid var(--border-strong);
+            padding: 10px 16px;
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.3s, transform 0.3s;
+            z-index: 200;
+        }
+        .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
         /* ——— RESPONSIVE ——— */
         @media (min-width: 640px) {
-            .feature-grid { grid-template-columns: repeat(2, 1fr); }
-            .consultant-grid { grid-template-columns: 1fr; }
-            .consultant-card { gap: 16px; }
-            .hero-ctas { flex-direction: row; }
+            code { white-space: nowrap; }
+            .cmd code.cmd-line { white-space: pre-wrap; }
         }
 
-        @media (min-width: 960px) {
-            .feature-grid { grid-template-columns: repeat(3, 1fr); }
-            .consultant-grid { grid-template-columns: repeat(3, 1fr); }
+        @media (min-width: 720px) {
+            .diagram { display: block; }
+            .cli-list > div { grid-template-columns: 72px minmax(0, 1fr); gap: 12px; }
+            .cli-list dt { padding-top: 7px; }
+            .chip-row { grid-template-columns: 170px minmax(0, 1fr); gap: 16px; }
+            .fact { grid-template-columns: 150px minmax(0, 1fr); gap: 24px; }
+        }
+
+        @media (min-width: 860px) {
+            .when-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 56px; }
+        }
+
+        @media (min-width: 1024px) {
+            .hero-grid { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 56px; align-items: start; }
+            .show-all { display: none; }
+            .pins-note { display: inline; }
+
+            .pinned { position: relative; padding-right: 30px; }
+            .pin {
+                display: flex; align-items: center; justify-content: center;
+                position: absolute; right: 0; top: 1px;
+                width: 20px; height: 20px; border-radius: 50%;
+                border: 1px solid var(--text-muted);
+                font-size: 11px; line-height: 1;
+                color: var(--text); background: var(--bg);
+                text-decoration: none;
+            }
+            .pin:hover, .pin:focus-visible { background: var(--text); color: var(--bg); border-color: var(--text); }
+            .pin::after {
+                content: attr(data-tip);
+                position: absolute; right: 28px; top: 50%;
+                transform: translateY(-50%);
+                white-space: nowrap;
+                font-family: var(--font-mono); font-size: 12px;
+                color: var(--text); background: var(--bg-card);
+                border: 1px solid var(--border-strong);
+                padding: 4px 8px;
+                opacity: 0; pointer-events: none;
+                transition: opacity 0.15s;
+            }
+            .pin:hover::after, .pin:focus-visible::after { opacity: 1; }
+        }
+
+        @media (max-width: 1023px) {
+            .card.collapsed .extra { display: none; }
+        }
+
+        @media (max-width: 859px) {
+            .menu-btn { display: inline-flex; }
+            .nav-links {
+                display: none;
+                position: absolute; top: 64px; left: 0; right: 0;
+                background: var(--bg);
+                border-bottom: 1px solid var(--border);
+                flex-direction: column; align-items: flex-start;
+                padding: 20px 16px 24px;
+                gap: 18px;
+            }
+            .nav-links.open { display: flex; }
+            .no-js .nav-links { display: flex; position: static; flex-direction: row; flex-wrap: wrap; padding: 0 0 12px; background: none; border: 0; }
+            .no-js .nav-inner { flex-wrap: wrap; height: auto; padding-top: 12px; }
+            .no-js .menu-btn { display: none; }
         }
 
         @media (max-width: 639px) {
-            .nav-links {
-                display: none;
-                position: absolute;
-                top: 64px;
-                left: 0;
-                right: 0;
-                background: rgba(10, 10, 10, 0.95);
-                backdrop-filter: blur(12px);
-                border-bottom: 1px solid var(--border);
-                flex-direction: column;
-                padding: 24px;
-                gap: 20px;
-            }
-
-            .nav-links.open { display: flex; }
-            .hamburger { display: block; }
-
-            .consultant-card {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 4px;
-            }
-
-            .consultant-focus { text-align: left; }
-            .recipe-intro { grid-template-columns: 1fr; gap: 20px; }
-            .recipe-legend { border-left: 0; border-top: 1px solid var(--border-light); padding: 16px 0 0; }
-            .recipe-grid { grid-template-columns: 1fr; }
-            .recipe-card-header { min-height: 0; }
-            .recipe-more { align-items: flex-start; flex-direction: column; }
-
-            .footer-inner { flex-direction: column; align-items: flex-start; }
-
-            section { padding: 60px 0; }
-            .hero { padding: 72px 0 60px; }
+            :root { --gutter: 16px; }
+            section { padding: 64px 0; }
+            .hero { padding: 48px 0 64px; }
+            .subhead { font-size: 16px; }
+            .cmd-hero { font-size: 13px; padding: 12px; }
+            .card-body { padding: 18px 14px 16px; font-size: 12.5px; }
+            .card figcaption { padding: 12px 14px; }
+            .by { white-space: normal; }
+            .prereq { padding: 16px; }
+            .measured { padding: 18px; }
         }
 
-        /* ——— COPY TOAST ——— */
-        .toast {
-            position: fixed;
-            bottom: 24px;
-            left: 50%;
-            transform: translateX(-50%) translateY(20px);
-            font-family: var(--font-mono);
-            font-size: 13px;
-            color: var(--text);
-            background: var(--bg-elevated);
-            border: 1px solid var(--border-light);
-            padding: 10px 20px;
-            opacity: 0;
-            transition: all 0.3s;
-            pointer-events: none;
-            z-index: 200;
-        }
-
-        .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-
-        /* ——— SUB-HEADING ——— */
-        .sub-heading {
-            font-family: var(--font-mono);
-            font-size: 13px;
-            font-weight: 500;
-            color: var(--text-secondary);
-            margin-top: 48px;
-            margin-bottom: 16px;
+        @media (prefers-reduced-motion: reduce) {
+            html { scroll-behavior: auto; }
+            *, *::before, *::after { transition: none !important; }
         }
     </style>
 </head>
-<body>
+<body class="no-js">
+<script>document.body.classList.remove('no-js');</script>
+
+<a class="skip-link" href="#main">Skip to content</a>
 
 <!-- NAV -->
-<nav>
-    <div class="container nav-inner">
-        <a href="#" class="nav-logo">AI Consultants</a>
-        <button class="hamburger" aria-label="Toggle menu" onclick="document.querySelector('.nav-links').classList.toggle('open')">
-            <span></span><span></span><span></span>
+<header class="site-nav">
+    <nav class="container nav-inner" aria-label="Main">
+        <a href="#top" class="wordmark">ai-consultants</a>
+        <button class="menu-btn" type="button" aria-expanded="false" aria-controls="nav-links">
+            <span class="bars" aria-hidden="true"><span></span><span></span><span></span></span>Menu
         </button>
-        <ul class="nav-links">
-            <li><a href="#features" onclick="closeMenu()">Features</a></li>
-            <li><a href="#how-it-works" onclick="closeMenu()">How it works</a></li>
-            <li><a href="#consultants" onclick="closeMenu()">Consultants</a></li>
-            <li><a href="#examples" onclick="closeMenu()">Examples</a></li>
-            <li><a href="#docs" onclick="closeMenu()">Docs</a></li>
+        <ul class="nav-links" id="nav-links">
+            <li><a href="#how-it-works">How it works</a></li>
+            <li><a href="#when">When to use it</a></li>
+            <li><a href="#get-started">Get started</a></li>
+            <li><a href="https://github.com/matteoscurati/ai-consultants#readme" target="_blank" rel="noopener">Docs <span aria-hidden="true">&#8599;</span><span class="sr-only">(README on GitHub, opens in a new tab)</span></a></li>
+            <li><a href="https://github.com/matteoscurati/ai-consultants" target="_blank" rel="noopener">GitHub <span aria-hidden="true">&#9733;</span><img src="https://img.shields.io/github/stars/matteoscurati/ai-consultants?style=flat-square&amp;label=&amp;labelColor=141414&amp;color=1f1f1f" alt="GitHub star count" height="20" loading="lazy"></a></li>
         </ul>
-    </div>
-</nav>
-
-<!-- HERO -->
-<header class="hero">
-    <div class="container">
-        <div class="hero-badges">
-            <span class="badge">Claude Code Skill</span>
-            <span class="badge">v5.3.0</span>
-            <span class="badge">Pre-flight coverage review</span>
-            <span class="badge">Kimi K3</span>
-            <span class="badge">MIT License</span>
-        </div>
-        <h1>AI Consultants</h1>
-        <p class="hero-tagline">Run a pre-flight coverage review before you ship. A cross-vendor panel finds the risks, edge cases, and approaches one model misses &mdash; then locally audits which source findings made it into the synthesis.</p>
-        <div class="hero-ctas">
-            <a href="https://github.com/matteoscurati/ai-consultants" class="btn" target="_blank" rel="noopener">View on GitHub <span class="arrow">&rarr;</span></a>
-            <a href="https://www.npmjs.com/package/ai-consultants" class="btn" target="_blank" rel="noopener">npm <span class="arrow">&rarr;</span></a>
-            <button class="btn btn-npx" onclick="copyNpx()">$ npx ai-consultants</button>
-        </div>
-        <div class="hero-agents">
-            <span>Runs from:</span> Claude Code, Codex CLI, Antigravity (agy), Cursor, Copilot, Windsurf, Kimi, and standalone Bash
-        </div>
-    </div>
+    </nav>
 </header>
 
-<!-- WHAT IT DOES -->
-<section id="what">
-    <div class="container">
-        <div class="section-label">What it does</div>
-        <h2>A pre-flight coverage review, not another guess.</h2>
-        <div class="what-text">
-            <p>AI Consultants convenes a panel of up to 10 frontier models &mdash; each with a distinct persona and a different vendor's blind spots &mdash; and fans your question out to all of them in parallel. <strong>No back-and-forth rounds, no voting on one answer.</strong> Every consultant answers once, independently.</p>
-            <p>Different model families miss different things. One model's blind spot is another's obvious flag. Fanning the question out and taking the union of what the panel collectively sees catches what any single model would have missed on its own.</p>
-            <p>The result: a <strong>source-audited coverage synthesis</strong>. Every attributable item cites locally assigned finding IDs, and <code>coverage_integrity</code> tells you whether the union is complete, degraded, failed, or not applicable. No incomplete union gets to call itself comprehensive.</p>
-        </div>
-    </div>
-</section>
+<main id="main">
 
-<!-- FEATURES -->
-<section id="features">
-    <div class="container">
-        <div class="section-label">Features</div>
-        <h2>Everything you need</h2>
-        <p class="section-desc">Built for developers who want more than a single opinion.</p>
-        <div class="feature-grid">
-            <div class="feature-card">
-                <div class="feature-icon">01</div>
-                <h3>10 AI Consultants</h3>
-                <p>Gemini 4 Argon, Codex, Mistral, Kimi K3, Claude, Qwen3.8, GLM 5.3, Grok 4.7, DeepSeek V4.1 Flash, and MiniMax M3.1 Flash. Each with a distinct role; the invoking agent is automatically excluded.</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">02</div>
-                <h3>Auditable Coverage</h3>
-                <p>Coverage items cite local source IDs. Missing, duplicated, invented, non-normalizable, or truncated input is disclosed as <code>DEGRADED</code> or <code>FAILED</code>, never silently presented as complete.</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">03</div>
-                <h3>Smart Routing</h3>
-                <p>Questions are classified by category. Opt in and each category is routed to the consultants with the strongest affinity for it.</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">04</div>
-                <h3>Quality Tiers</h3>
-                <p>Maximum, premium, standard, and economy model tiers. <code>max_quality</code> confines smoke-tested subscription targets to critical decisions; normal premium runs stay cost-balanced.</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">05</div>
-                <h3>Cost Control</h3>
-                <p>Budget enforcement, semantic caching, and cost-aware routing. Every figure states what it rests on &mdash; the provider&rsquo;s own token counts where they exist, a local estimate where they don&rsquo;t, and an explicit exclusion for credit-billed models.</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">06</div>
-                <h3>Token-Efficient Context</h3>
-                <p>Share large files without burning the consultants' context window. AST-based skeleton extraction, category-aware project tree, and <code>PRIMARY</code>/<code>CONTEXT</code> relevance tags let you point the panel at what matters.</p>
+<!-- HERO -->
+<div class="hero" id="top">
+    <div class="container hero-grid">
+        <div class="hero-copy">
+            <p class="eyebrow">For developers using Claude Code, Codex CLI, Antigravity, or just a terminal</p>
+            <h1>Ask several AI models at once. Get one list of everything they raised.</h1>
+            <p class="subhead">ai-consultants is a free, open-source command-line tool for design reviews, threat models and &ldquo;what am I missing?&rdquo; checks before a hard-to-undo change. It sends your question, and any files you name, to models from different companies (Gemini, GPT, Claude, Mistral and more) at the same time, then merges their answers into one list that shows which model raised each point.</p>
+
+            <div class="cta" role="group" aria-labelledby="try-label">
+                <div class="cta-label" id="try-label">Try it in two commands</div>
+                <div class="cmd cmd-hero">
+                    <code class="cmd-line"><span class="prompt" aria-hidden="true">$ </span><span class="cmd-text">npx ai-consultants configure</span><span class="cmd-hint"># finds your model CLIs and keys &middot; no model calls</span></code>
+                    <button class="copy" type="button" data-copy aria-label="Copy the configure command">Copy</button>
+                </div>
+                <div class="cmd cmd-hero">
+                    <code class="cmd-line"><span class="prompt" aria-hidden="true">$ </span><span class="cmd-text">npx ai-consultants "What can go wrong when a service retries failed webhook deliveries?"</span><span class="cmd-hint"># asks every model you set up, then merges</span></code>
+                    <button class="copy" type="button" data-copy aria-label="Copy the question command">Copy</button>
+                </div>
+                <div class="cta-notes">
+                    <p>You need Node.js, jq, and at least two model CLIs installed and signed in (or two API keys).</p>
+                    <p>Each question makes one call per model plus one to merge, billed to your own accounts. Your question and files go to every provider on your panel.</p>
+                </div>
+                <a class="quiet-link" href="#get-started">Set it up in 3 steps &darr;</a>
             </div>
         </div>
+
+        <figure class="card" id="example" aria-label="A real run: what you ask and what you get back">
+            <div class="card-bar" aria-hidden="true"><i></i><i></i><i></i></div>
+            <video class="card-video" autoplay muted loop playsinline preload="metadata" poster="demo/poster.png" width="1240" height="954" aria-label="Terminal recording of a real run: npx ai-consultants asks Gemini, Codex and Mistral what can go wrong when a service retries failed webhook deliveries, then prints the merged list with the models that raised each point.">
+                <source src="demo/run.webm" type="video/webm">
+                <source src="demo/run.mp4" type="video/mp4">
+            </video>
+            <div class="card-body">
+                <div class="card-label">You get back <span class="fname">&middot; report.md, 4 of 26 points</span></div>
+                <div class="report">
+                    <p class="r-outcome">Outcome: <b>MET</b> (3/3 responded, quorum=2)</p>
+                    <p class="r-gloss">MET: enough models answered, and every point they returned is cited in the list.</p>
+                    <p class="r-head">Coverage Union <span class="r-gloss">&middot; every distinct point, deduplicated</span></p>
+                    <ul class="r-list">
+                        <li><span><span class="kind">risk:</span> <span class="point">Duplicate deliveries remain possible under at-least-once retry; deduplication and ordering responsibility is shifted onto the receiving consumer, which must be idempotent and tolerate concurrent delivery.</span> <span class="by">&mdash; raised by <b>Codex, Gemini, Mistral</b></span></span></li>
+                        <li><span><span class="kind">edge_case:</span> <span class="point">Outbound dispatchers remain exposed to SSRF and DNS rebinding on each retry (the target can re-resolve to a private IP) unless egress goes through a hardened proxy with private-range blocklists.</span> <span class="by">&mdash; raised by <b>Gemini</b> <span class="solo"><span aria-hidden="true">&#9679;</span><span class="sr-only">(raised by only one model)</span></span></span></span></li>
+                        <li><span><span class="kind">risk:</span> <span class="point">Replay attack surface: retrying with retained, long-lived signatures lets a captured delivery be replayed against the receiver.</span> <span class="by">&mdash; raised by <b>Mistral</b> <span class="solo"><span aria-hidden="true">&#9679;</span><span class="sr-only">(raised by only one model)</span></span></span></span></li>
+                        <li class="extra"><span><span class="kind">edge_case:</span> <span class="point">An HTTP success response only confirms what the receiver contract promises, which may be acceptance rather than completed processing, so a 2xx can mask downstream failure.</span> <span class="by">&mdash; raised by <b>Codex</b> <span class="solo"><span aria-hidden="true">&#9679;</span><span class="sr-only">(raised by only one model)</span></span></span></span></li>
+                    </ul>
+                </div>
+                <button class="show-all" type="button" aria-expanded="false" hidden>Show all</button>
+                <p class="legend"><span class="solo" aria-hidden="true">&#9679;</span> Raised by only one model. It stays in the list; nothing is voted out.</p>
+            </div>
+            <figcaption>A real run on 21 Oct 2026 (ai-consultants 5.3.0 with Gemini, Codex and Mistral). It took about 2&frac12; minutes; the video shortens the waiting. <a href="https://github.com/matteoscurati/aiconsultants.sh/blob/main/demo/report.md" target="_blank" rel="noopener">Read the full report</a>.</figcaption>
+        </figure>
     </div>
-</section>
+</div>
 
 <!-- HOW IT WORKS -->
-<section id="how-it-works">
+<section id="how-it-works" aria-labelledby="how-title">
     <div class="container">
         <div class="section-label">How it works</div>
-        <h2>From change to pre-flight coverage</h2>
-        <div class="pipeline">
-            <span class="pipeline-step">Classify</span>
-            <span class="pipeline-arrow">&rarr;</span>
-            <span class="pipeline-step">Route</span>
-            <span class="pipeline-arrow">&rarr;</span>
-            <span class="pipeline-step">Fan out</span>
-            <span class="pipeline-arrow">&rarr;</span>
-            <span class="pipeline-step">Coverage synthesis</span>
-        </div>
-        <div class="steps">
-            <div class="step">
-                <div class="step-num">01</div>
+        <h2 id="how-title">One question in, one list out</h2>
+
+        <ol class="pipeline" aria-label="Pipeline">
+            <li class="pipeline-step">Ask</li>
+            <li class="pipeline-arrow" aria-hidden="true">&rarr;</li>
+            <li class="pipeline-step">Each model answers on its own</li>
+            <li class="pipeline-arrow" aria-hidden="true">&rarr;</li>
+            <li class="pipeline-step">One merged list</li>
+        </ol>
+
+        <figure class="diagram">
+            <svg viewBox="0 0 720 280" role="img" aria-labelledby="dg-title">
+                <title id="dg-title">Your question and files go to Google Gemini, OpenAI Codex and Mistral, whose answers merge into one list. Claude is skipped when you run from Claude Code.</title>
+                <rect class="box" x="0.5" y="74.5" width="170" height="70"/>
+                <text class="strong" x="85" y="105" text-anchor="middle">Your question</text>
+                <text class="dim" x="85" y="126" text-anchor="middle">+ files</text>
+
+                <path class="line" d="M171 110 C 220 110, 220 40, 270 40"/>
+                <path class="line" d="M171 110 L 270 110"/>
+                <path class="line" d="M171 110 C 220 110, 220 180, 270 180"/>
+
+                <rect class="box" x="270.5" y="20.5" width="170" height="40"/>
+                <text x="355" y="45" text-anchor="middle">Google Gemini</text>
+                <rect class="box" x="270.5" y="90.5" width="170" height="40"/>
+                <text x="355" y="115" text-anchor="middle">OpenAI Codex</text>
+                <rect class="box" x="270.5" y="160.5" width="170" height="40"/>
+                <text x="355" y="185" text-anchor="middle">Mistral</text>
+
+                <path class="line" d="M441 40 C 490 40, 490 110, 540 110"/>
+                <path class="line" d="M441 110 L 540 110"/>
+                <path class="line" d="M441 180 C 490 180, 490 110, 540 110"/>
+
+                <rect class="box" x="540.5" y="54.5" width="178" height="112"/>
+                <text class="strong" x="629" y="82" text-anchor="middle">One merged list</text>
+                <line class="bar" x1="560" y1="104" x2="698" y2="104"/>
+                <line class="bar" x1="560" y1="124" x2="680" y2="124"/>
+                <line class="bar" x1="560" y1="144" x2="692" y2="144"/>
+
+                <rect class="skip" x="270.5" y="234.5" width="448" height="36"/>
+                <text class="dim" x="494" y="257" text-anchor="middle">Claude: skipped when you run from Claude Code</text>
+            </svg>
+        </figure>
+
+        <ol class="steps">
+            <li class="step" id="step-1">
+                <span class="step-num" aria-hidden="true">01</span>
                 <div>
-                    <h3>Classify &amp; route</h3>
-                    <p>Your question is categorized &mdash; architecture, security, performance, code review &mdash; and scored for complexity and intent. From that, routing picks which consultants in the panel see this specific question.</p>
+                    <h3>Ask</h3>
+                    <p>Type a question in your terminal, or use <code>/ai-consultants:consult</code> inside Claude Code. Put file paths after the question. The tool reads them on your machine and saves an exact copy of what it sent as <code>context.md</code>.</p>
                 </div>
-            </div>
-            <div class="step">
-                <div class="step-num">02</div>
+            </li>
+            <li class="step" id="step-2">
+                <span class="step-num" aria-hidden="true">02</span>
                 <div>
-                    <h3>Fan out</h3>
-                    <p>The relevant consultants are queried in parallel, independently. Each returns a structured response &mdash; summary, analysis, pros/cons, and a 1&ndash;10 confidence score &mdash; from its own persona and focus area.</p>
+                    <h3>Each model answers on its own</h3>
+                    <p>The question goes to every model on your panel at the same time. Each answers once without seeing the others, so there are no debate rounds pulling everyone toward the majority view. Each also gets a different brief (the Architect, the Pragmatist, the Devil's Advocate and so on) so they don't all come at it the same way. Run it from Claude Code and Claude sits this one out: you already have its view.</p>
                 </div>
-            </div>
-            <div class="step">
-                <div class="step-num">03</div>
+            </li>
+            <li class="step" id="step-3">
+                <span class="step-num" aria-hidden="true">03</span>
                 <div>
-                    <h3>Synthesize &amp; audit</h3>
-                    <p>Normalized findings are deduplicated into a coverage union, each with local source IDs. A post-check compares expected and represented IDs before the report labels the result <code>MET</code>, <code>DEGRADED</code>, or <code>FAILED</code>.</p>
+                    <h3>One merged list</h3>
+                    <p>One more model call merges the answers into a single list of every distinct point, each tagged with who raised it, plus a recommended approach and a risk table with severities and mitigations. A check on your machine then reports whether every finding the models returned is cited somewhere in the merged list (MET, DEGRADED or FAILED) and how many models answered. If a model failed, the report names it and gives the real reason, such as &ldquo;CLI not found&rdquo; or &ldquo;401 Unauthorized&rdquo;. It checks the bookkeeping, not the content: it can't tell you whether the merged wording is faithful or whether the points are true.</p>
                 </div>
-            </div>
-        </div>
+            </li>
+        </ol>
+
+        <p class="footnote">Advice only. The models don't run your code or tests, and nothing in your project changes.</p>
     </div>
 </section>
 
-<!-- THE PANEL -->
-<section id="consultants">
+<!-- WHEN TO USE IT -->
+<section id="when" aria-labelledby="when-title">
     <div class="container">
-        <div class="section-label">The Panel</div>
-        <h2>10 consultants, 10 perspectives</h2>
-        <p class="section-desc">Each consultant has a distinct persona that shapes their analysis. The invoking agent is automatically excluded to prevent self-consultation. The focused roster contains 10 supported consultants.</p>
+        <div class="section-label">When to use it</div>
+        <h2 id="when-title">Use it when you want everything listed, not one verdict</h2>
+        <p class="lead">Different models often raise different points. That helps most when the job is to list things: risks, edge cases, attack paths, alternatives. It helps little when there's one right answer to find.</p>
 
-        <div class="consultant-group">
-            <div class="group-label">CLI-Based &mdash; 8 consultants</div>
-            <div class="consultant-grid">
-                <div class="consultant-card">
-                    <div>
-                        <div class="consultant-name">Google Gemini</div>
-                        <div class="consultant-persona">The Architect</div>
-                    </div>
-                    <div class="consultant-focus">Gemini 4 Argon High on agy · Argon on the API</div>
-                </div>
-                <div class="consultant-card">
-                    <div>
-                        <div class="consultant-name">OpenAI Codex</div>
-                        <div class="consultant-persona">The Pragmatist</div>
-                    </div>
-                    <div class="consultant-focus">GPT-6.1 Sol · Astra in max_quality · Terra/Luna tiers</div>
-                </div>
-                <div class="consultant-card">
-                    <div>
-                        <div class="consultant-name">Mistral Vibe</div>
-                        <div class="consultant-persona">The Devil's Advocate</div>
-                    </div>
-                    <div class="consultant-focus">Edge cases, risks, security</div>
-                </div>
-                <div class="consultant-card">
-                    <div>
-                        <div class="consultant-name">Kimi K3</div>
-                        <div class="consultant-persona">The Eastern Sage</div>
-                    </div>
-                    <div class="consultant-focus">K3 · K3-256k in max_quality</div>
-                </div>
-                <div class="consultant-card">
-                    <div>
-                        <div class="consultant-name">Claude</div>
-                        <div class="consultant-persona">The Synthesizer</div>
-                    </div>
-                    <div class="consultant-focus">Fable 5.1 · Opus 5.5 in standard</div>
-                </div>
-                <div class="consultant-card">
-                    <div>
-                        <div class="consultant-name">Qwen3</div>
-                        <div class="consultant-persona">The Analyst</div>
-                    </div>
-                    <div class="consultant-focus">Qwen3.8-Max · 3.8 Flash in standard</div>
-                </div>
-                <div class="consultant-card">
-                    <div>
-                        <div class="consultant-name">Grok 4.7</div>
-                        <div class="consultant-persona">The Provocateur</div>
-                    </div>
-                    <div class="consultant-focus">Grok 4.7 · xhigh + concurrency-safe shared OAuth</div>
-                </div>
-                <div class="consultant-card">
-                    <div>
-                        <div class="consultant-name">MiniMax</div>
-                        <div class="consultant-persona">The Pragmatic Optimizer</div>
-                    </div>
-                    <div class="consultant-focus">M3.1-Flash in every tier · always reasons</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="consultant-group">
-            <div class="group-label">API-Based &mdash; 2 consultants</div>
-            <div class="consultant-grid">
-                <div class="consultant-card">
-                    <div>
-                        <div class="consultant-name">GLM 5.3</div>
-                        <div class="consultant-persona">The Methodologist</div>
-                    </div>
-                    <div class="consultant-focus">GLM 5.3 Flash · GLM-5.3 in max_quality</div>
-                </div>
-                <div class="consultant-card">
-                    <div>
-                        <div class="consultant-name">DeepSeek</div>
-                        <div class="consultant-persona">The Code Specialist</div>
-                    </div>
-                    <div class="consultant-focus">V4.1 Flash · max effort in max_quality</div>
-                </div>
-            </div>
-        </div>
-
-    </div>
-</section>
-
-<!-- EXECUTABLE EXAMPLES -->
-<section id="examples">
-    <div class="container">
-        <div class="section-label">Executable examples</div>
-        <div class="recipe-intro">
+        <div class="when-grid">
             <div>
-                <h2>Start from the decision, not the knobs.</h2>
-                <p>Each recipe is a complete control surface for one job. Paste it into your shell for a one-off run, or move the variables into <code>~/.config/ai-consultants/.env</code> to make it your default.</p>
+                <h3 class="col-title">Use it for</h3>
+                <ul class="use-list">
+                    <li><span class="situation">Design review before you build</span><span class="q">"What could go wrong with this webhook-delivery design?" src/webhooks.ts</span></li>
+                    <li><span class="situation">Threat modeling</span><span class="q">"Enumerate the ways an attacker could abuse this JWT validation." src/auth.ts</span></li>
+                    <li><span class="situation">&ldquo;What am I missing?&rdquo; before a risky change</span><span class="q">"Which edge cases does this zero-downtime Postgres migration plan miss?" docs/migration.md</span></li>
+                    <li><span class="situation">Alternatives you haven't considered</span><span class="q">"What are the alternatives to polling for this sync job, and what does each trade off?"</span></li>
+                    <li><span class="situation">Hard-to-reverse choices</span><span class="q">"Event log or mutable relational state for this billing service?"</span><span class="q-extra">Add <code>--strategy compare_only</code> to see the answers side by side, with no merged pick.</span></li>
+                </ul>
             </div>
-            <div class="recipe-legend">
-                VARIABLES &rarr; HOW THE PANEL THINKS<br>
-                COMMAND &rarr; WHAT THE PANEL DECIDES
+            <div>
+                <h3 class="col-title">Skip it for</h3>
+                <ul class="skip-list">
+                    <li>Questions with one right answer, like a flag, an API detail or syntax. One model is enough.</li>
+                    <li>Finding the bug in a short piece of code. In our bug-finding test, one strong model found all 19 planted bugs on its own.</li>
+                    <li>Checking that an answer is correct. It doesn't run your code or tests, and models agreeing isn't proof.</li>
+                    <li>Code you're not allowed to send to several outside companies.</li>
+                    <li>Every commit or a CI check. A run makes several paid calls and usually takes minutes.</li>
+                </ul>
             </div>
         </div>
 
-        <div class="recipe-grid">
-            <article class="recipe-card">
-                <div class="recipe-card-header">
-                    <div class="recipe-meta"><span>Choice</span><span class="recipe-shape">fan-out</span></div>
-                    <h3>Compare two options. Pick one.</h3>
-                    <p>Every consultant answers once in parallel, and the coverage synthesis lays out where they agree and where they don't &mdash; then names a winner.</p>
-                </div>
-<pre><span class="cmd">ai-consultants --strategy majority \</span>
-<span class="cmd">  "Choose REST or GraphQL for this API \</span>
-<span class="cmd">  and justify one winner"</span>
-
-<span class="comment"># Trade-offs only: --strategy compare_only</span></pre>
-            </article>
-
-            <article class="recipe-card">
-                <div class="recipe-card-header">
-                    <div class="recipe-meta"><span>Release gate</span><span class="recipe-shape">health + quorum</span></div>
-                    <h3>Do not trust a panel that silently shrank</h3>
-                    <p>Ping every selected consultant first and stop if fewer than three answer.</p>
-                </div>
-<pre><span class="cmd">ENABLE_HEALTH_GATE=true \</span>
-<span class="cmd">HEALTH_GATE_TIMEOUT=30 \</span>
-<span class="cmd">QUORUM_MIN=3 \</span>
-<span class="cmd">QUORUM_ACTION=stop \</span>
-<span class="cmd">ai-consultants \</span>
-<span class="cmd">  "Make a release recommendation"</span></pre>
-            </article>
-
-            <article class="recipe-card">
-                <div class="recipe-card-header">
-                    <div class="recipe-meta"><span>Cost ceiling</span><span class="recipe-shape">cost-capped</span></div>
-                    <h3>Stop before the budget is crossed</h3>
-                    <p>Route economically, cap the session at $0.50, and keep partial results on stop.</p>
-                </div>
-<pre><span class="cmd">ENABLE_BUDGET_LIMIT=true \</span>
-<span class="cmd">MAX_SESSION_COST=0.50 \</span>
-<span class="cmd">BUDGET_ACTION=stop \</span>
-<span class="cmd">ENABLE_COST_AWARE_ROUTING=true \</span>
-<span class="cmd">ai-consultants --preset cost-capped \</span>
-<span class="cmd">  --strategy cost_capped \</span>
-<span class="cmd">  "Find the smallest safe fix"</span></pre>
-            </article>
-
-            <article class="recipe-card">
-                <div class="recipe-card-header">
-                    <div class="recipe-meta"><span>Kimi</span><span class="recipe-shape">K3 pinned</span></div>
-                    <h3>Guarantee K3 for the Kimi seat</h3>
-                    <p>Override any older model stored in the user's Kimi configuration for this run.</p>
-                </div>
-<pre><span class="cmd">ENABLE_KIMI=true \</span>
-<span class="cmd">KIMI_MODEL=kimi-code/k3 \</span>
-<span class="cmd">ai-consultants --preset balanced \</span>
-<span class="cmd">  "Review this API design from a \</span>
-<span class="cmd">  holistic perspective"</span></pre>
-            </article>
-        </div>
-
-        <div class="recipe-more">
-            <span>Also covered: CLI-only mode, hybrid API panels, large prompts, and tagged file context.</span>
-            <a href="https://github.com/matteoscurati/ai-consultants/blob/main/docs/RECIPES.md" target="_blank" rel="noopener">Open the full recipes reference &rarr;</a>
+        <div class="measured">
+            <h3>What we've measured, and what we haven't</h3>
+            <p>Two small internal tests, not a published benchmark: a direction, not proof. On three open-ended tasks (list the risks and edge cases), the merged list covered clearly more items on a reference checklist than one model alone, and more than one model asked several times. In a separate bug-finding test, one strong model already found all 19 planted bugs, so the panel added nothing. We haven't shown that a panel is more accurate than one strong model, and we don't claim it.</p>
         </div>
     </div>
 </section>
 
-<!-- DOCS / GET STARTED -->
-<section id="docs">
+<!-- WORKS WITH -->
+<section id="works-with" aria-labelledby="works-title">
     <div class="container">
-        <div class="section-label">Get Started</div>
-        <h2>Up and running in 30 seconds</h2>
-        <div class="install-methods">
-            <div class="install-method">
-                <h3>Option A: npx (recommended)</h3>
-<pre><span class="comment"># Run directly &mdash; no install needed</span>
-<span class="cmd">npx ai-consultants "How should I structure my auth system?"</span>
+        <div class="section-label">Works with</div>
+        <h2 id="works-title">Uses the tools and accounts you already have</h2>
 
-<span class="comment"># With a preset</span>
-<span class="cmd">npx ai-consultants --preset balanced "Redis or Memcached?"</span>
-
-<span class="comment"># Let the doctor recommend a preset for you (v2.13)</span>
-<span class="cmd">npx ai-consultants doctor --suggest-preset --question "How can I prevent SQL injection?"</span>
-
-<span class="comment"># Scaffold persistent config at ~/.config/ai-consultants/ (v2.12)</span>
-<span class="cmd">npx ai-consultants init</span>
-
-<span class="comment"># Detect your CLIs and keys, then write a full config (v2.22)</span>
-<span class="cmd">npx ai-consultants configure</span>
-
-<span class="comment"># Run diagnostics</span>
-<span class="cmd">npx ai-consultants doctor --fix</span>
-
-<span class="comment"># Install slash commands for Claude Code</span>
-<span class="cmd">npx ai-consultants install</span>
-
-<span class="comment"># Keep the consultant CLIs up to date (v2.21)</span>
-<span class="cmd">npx ai-consultants update-clis</span></pre>
-            </div>
-            <div class="install-method">
-                <h3>Option B: Claude Code skill (curl | bash)</h3>
-<pre><span class="comment"># Install the skill</span>
-<span class="cmd">curl -fsSL https://raw.githubusercontent.com/matteoscurati/ai-consultants/main/scripts/install.sh | bash</span>
-
-<span class="comment"># Ask your first question</span>
-<span class="cmd">/ai-consultants:consult "How should I structure my auth system?"</span></pre>
-            </div>
-            <div class="install-method">
-                <h3>Option C: Standalone bash</h3>
-<pre><span class="comment"># Clone and set up</span>
-<span class="cmd">git clone https://github.com/matteoscurati/ai-consultants.git</span>
-<span class="cmd">cd ai-consultants</span>
-<span class="cmd">./scripts/doctor.sh --fix</span>
-
-<span class="comment"># Run a consultation</span>
-<span class="cmd">./scripts/consult_all.sh "How should I structure my auth system?"</span></pre>
-            </div>
+        <div class="chip-row">
+            <h3 class="row-label">Run it from</h3>
+            <ul class="chips">
+                <li>your terminal (macOS or Linux; Windows through WSL)</li>
+                <li>Claude Code (slash command)</li>
+                <li>Codex CLI and Antigravity (as a skill)</li>
+                <li>Cursor, GitHub Copilot and Windsurf through SkillPort, a separate npm tool that installs skills into those editors</li>
+            </ul>
         </div>
-        <div class="agents-note">
-            Works with Claude Code, Codex CLI, Antigravity (agy), Cursor, Copilot, Windsurf (via SkillPort), Kimi, and standalone Bash.
+
+        <div class="chip-row">
+            <h3 class="row-label">Models it can ask</h3>
+            <ul class="chips">
+                <li>Google Gemini</li>
+                <li>OpenAI (Codex)</li>
+                <li>Anthropic Claude</li>
+                <li>Mistral</li>
+                <li>Moonshot Kimi</li>
+                <li>Alibaba Qwen</li>
+                <li>xAI Grok</li>
+                <li>MiniMax</li>
+                <li>Zhipu GLM</li>
+                <li>DeepSeek</li>
+            </ul>
         </div>
+
+        <p class="works-note">Pick any two or more. Most are reached through that company's own command-line tool, signed in with your account; GLM and DeepSeek need an API key and are off until you add one. ai-consultants doesn't sell model access: each company bills your usage to you. Current model versions are listed in the <a href="https://github.com/matteoscurati/ai-consultants#consultants" target="_blank" rel="noopener">README</a>.</p>
+
+        <p class="small-print">Independent open-source project. Not affiliated with or endorsed by any of these companies.</p>
     </div>
 </section>
 
-<!-- CONFIGURATION -->
-<section id="configuration">
+<!-- BEFORE YOU RUN IT -->
+<section id="before-you-run" aria-labelledby="before-title">
     <div class="container">
-        <div class="section-label">Configuration</div>
-        <h2>The control surface</h2>
-        <p class="section-desc">Start with one of three public pre-flight modes. Presets still choose the panel, strategies combine its answers, and every persistent parameter remains directly addressable.</p>
+        <div class="section-label">Before you run it</div>
+        <h2 id="before-title">Cost, time, and where your code goes</h2>
 
-        <div class="sub-heading">Automatic configuration</div>
-<pre><span class="comment"># Detect installed CLIs and API credentials, then save an XDG config</span>
-<span class="cmd">npx ai-consultants configure</span>
-
-<span class="comment"># Repeatable configuration for a coverage-focused architecture review</span>
-<span class="cmd">npx ai-consultants configure \</span>
-  <span class="cmd">--set DEFAULT_PRESET=balanced \</span>
-  <span class="cmd">--set DEFAULT_STRATEGY=coverage</span>
-
-<span class="comment"># Guided setup, exhaustive review, and parameter discovery</span>
-<span class="cmd">npx ai-consultants configure --interactive</span>
-<span class="cmd">npx ai-consultants configure --advanced</span>
-<span class="cmd">npx ai-consultants configure --show-parameters</span>
-<span class="cmd">npx ai-consultants configure --dry-run</span></pre>
-
-        <div class="sub-heading">Public modes</div>
-        <div class="table-wrapper">
-            <table class="config-table">
-                <thead>
-                    <tr>
-                        <th>Mode</th>
-                        <th>Preset</th>
-                        <th>Strategy</th>
-                        <th>Use Case</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr><td>fast-check</td><td>fast</td><td>coverage</td><td>Quick economy pre-flight check</td></tr>
-                    <tr><td>coverage-review</td><td>balanced</td><td>coverage</td><td>General pre-flight coverage review</td></tr>
-                    <tr><td>max-coverage</td><td>max_quality</td><td>coverage</td><td>Broadest eligible maximum-quality review</td></tr>
-                </tbody>
-            </table>
-        </div>
-<pre><span class="comment"># Three public workflows; an explicit --strategy still wins</span>
-<span class="cmd">npx ai-consultants --mode fast-check "Check this before I ship"</span>
-<span class="cmd">npx ai-consultants --mode coverage-review "Review this change"</span>
-<span class="cmd">npx ai-consultants --mode max-coverage "Audit this critical release"</span></pre>
-
-        <div class="sub-heading">Presets</div>
-        <div class="table-wrapper">
-            <table class="config-table">
-                <thead>
-                    <tr>
-                        <th>Preset</th>
-                        <th>Consultants</th>
-                        <th>Use Case</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr><td>minimal</td><td>2 (Gemini + Codex)</td><td>Fast, cheap</td></tr>
-                    <tr><td>fast</td><td>2 + economy models</td><td>Quick checks</td></tr>
-                    <tr><td>balanced</td><td>3 (Gemini, Codex, Mistral)</td><td>Standard consultations</td></tr>
-                    <tr><td>medium</td><td>3 + standard models</td><td>General questions</td></tr>
-                    <tr><td>thorough</td><td>3</td><td>Comprehensive analysis</td></tr>
-                    <tr><td>cost-capped</td><td>3 + budget cap</td><td>Minimal API costs</td></tr>
-                    <tr><td>security</td><td>3 + security-first routing</td><td>Security reviews</td></tr>
-                    <tr><td>high-stakes</td><td>4 of 10</td><td>Maximum rigor for critical decisions</td></tr>
-                    <tr><td>max_quality</td><td>10 catalogued; 9 after canonical host exclusion</td><td>Critical decisions</td></tr>
-                </tbody>
-            </table>
-        </div>
-
-        <div class="sub-heading">Synthesis Strategies</div>
-        <div class="table-wrapper">
-            <table class="config-table">
-                <thead>
-                    <tr>
-                        <th>Strategy</th>
-                        <th>Description</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr><td>coverage</td><td>Deduplicated union of every distinct point across the panel (default)</td></tr>
-                    <tr><td>majority</td><td>Most common answer wins</td></tr>
-                    <tr><td>risk_averse</td><td>Weight conservative responses higher</td></tr>
-                    <tr><td>security_first</td><td>Prioritize security considerations</td></tr>
-                    <tr><td>cost_capped</td><td>Prefer simpler, cheaper solutions</td></tr>
-                    <tr><td>compare_only</td><td>No recommendation, just comparison</td></tr>
-                </tbody>
-            </table>
-        </div>
-
-        <div class="sub-heading">Key Environment Variables</div>
-<pre><span class="comment"># Panel and synthesis</span>
-<span class="comment"># DEFAULT_PRESET=balanced</span>     <span class="comment"># optional; unset keeps explicit ENABLE_* choices</span>
-<span class="cmd">DEFAULT_STRATEGY=coverage</span>     <span class="comment"># coverage | majority | risk_averse | security_first | cost_capped | compare_only</span>
-<span class="cmd">ENABLE_SYNTHESIS=true</span>
-
-<span class="comment"># Trust the panel size</span>
-<span class="cmd">ENABLE_HEALTH_GATE=false</span>     <span class="comment"># Adds one small live ping per selected consultant</span>
-<span class="cmd">QUORUM_MIN=2</span>
-<span class="cmd">QUORUM_ACTION=warn</span>           <span class="comment"># warn | stop</span>
-
-<span class="comment"># Cost ceiling</span>
-<span class="cmd">ENABLE_BUDGET_LIMIT=false</span>
-<span class="cmd">MAX_SESSION_COST=1.00</span>
-<span class="cmd">BUDGET_ACTION=warn</span>           <span class="comment"># warn | stop</span></pre>
-
-        <div class="recipe-more">
-            <span>Every variable, default, transport switch, timeout, and optimization flag is documented in the repository.</span>
-            <a href="https://github.com/matteoscurati/ai-consultants/blob/main/references/configuration.md" target="_blank" rel="noopener">Open the full reference &rarr;</a>
-        </div>
+        <dl class="facts">
+            <div class="fact">
+                <dt>Cost</dt>
+                <dd>One call per model plus one to merge, and a failed call may be retried up to twice. Calls through a signed-in CLI count against your plan with that company; API keys are billed per use. Every run prints an estimated cost when it finishes, using the rates in <a href="https://github.com/matteoscurati/ai-consultants/blob/main/docs/COST_RATES.md" target="_blank" rel="noopener">docs/COST_RATES.md</a>. Estimates aren't invoices, and models billed by plan or credits are left out (the run says so). A spending cap based on the tool's own estimates is off by default: set <code>ENABLE_BUDGET_LIMIT=true</code>, <code>MAX_SESSION_COST=0.50</code> and <code>BUDGET_ACTION=stop</code>. It can't see usage billed by plan or credits. Asking the same question again within 24 hours reuses saved answers.</dd>
+            </div>
+            <div class="fact">
+                <dt>Time</dt>
+                <dd>The models answer in parallel, so you wait for the slowest. Expect a few minutes, longer with heavy reasoning models. There's no time limit by default, and every 30 seconds it prints who it's still waiting for. To stop waiting, <code>touch &lt;results folder&gt;/.proceed</code> merges the answers already in; <code>.abort</code> ends the run. A call you stop may still be billed.</dd>
+            </div>
+            <div class="fact">
+                <dt>Privacy</dt>
+                <dd>Your question and every file you name go to each provider on your panel, under that provider's terms. ai-consultants has no server of its own. <code>context.md</code> shows exactly what went out. If your code can't leave your company, don't point it at that code, or limit the panel to providers you're cleared to use.</dd>
+            </div>
+        </dl>
     </div>
 </section>
+
+<!-- GET STARTED -->
+<section id="get-started" aria-labelledby="start-title">
+    <div class="container">
+        <div class="section-label">Get started</div>
+        <h2 id="start-title">Set up once, then ask</h2>
+        <p class="lead">Setup takes about a minute if two model CLIs are already installed and signed in (longer if you need to set them up). Each question then takes a few minutes.</p>
+
+        <div class="prereq">
+            <h3 class="box-label">You need</h3>
+            <ul>
+                <li>macOS or Linux (Windows through WSL), Node.js, and jq, curl and bc. macOS: <code>brew install jq</code> &middot; Debian/Ubuntu: <code>sudo apt-get install -y jq curl bc</code></li>
+                <li>At least two model CLIs, installed and signed in with each tool's own login, or API keys. Three to start with:
+                    <dl class="cli-list">
+                        <div>
+                            <dt>Gemini</dt>
+                            <dd>
+                                <div class="cmd"><code class="cmd-line"><span class="prompt" aria-hidden="true">$ </span><span class="cmd-text">curl -fsSL https://antigravity.google/cli/install.sh | bash</span></code><button class="copy" type="button" data-copy aria-label="Copy the Gemini install command">Copy</button></div>
+                                then run <code>agy</code> once to sign in (or set <code>GEMINI_API_KEY</code>)
+                            </dd>
+                        </div>
+                        <div>
+                            <dt>Codex</dt>
+                            <dd><div class="cmd"><code class="cmd-line"><span class="prompt" aria-hidden="true">$ </span><span class="cmd-text">npm install -g @openai/codex</span></code><button class="copy" type="button" data-copy aria-label="Copy the Codex install command">Copy</button></div>
+                                then sign in with <code>codex login</code> (or set <code>OPENAI_API_KEY</code>)
+                            </dd>
+                        </div>
+                        <div>
+                            <dt>Mistral</dt>
+                            <dd><div class="cmd"><code class="cmd-line"><span class="prompt" aria-hidden="true">$ </span><span class="cmd-text">pip install mistral-vibe</span></code><button class="copy" type="button" data-copy aria-label="Copy the Mistral install command">Copy</button></div>
+                                then set <code>MISTRAL_API_KEY</code> from the Mistral console
+                            </dd>
+                        </div>
+                    </dl>
+                </li>
+            </ul>
+        </div>
+
+        <div class="tabs">
+            <div class="tablist" role="tablist" aria-label="Where you run it">
+                <button class="tab" role="tab" type="button" id="tab-terminal" aria-controls="panel-terminal" aria-selected="true">Terminal</button>
+                <button class="tab" role="tab" type="button" id="tab-claude" aria-controls="panel-claude" aria-selected="false" tabindex="-1">Claude Code</button>
+            </div>
+
+            <div class="tabpanel" role="tabpanel" id="panel-terminal" aria-labelledby="tab-terminal" tabindex="0">
+                <h3 class="panel-title">Terminal</h3>
+                <ol class="setup-steps">
+                    <li>
+                        <span class="setup-n" aria-hidden="true">1</span>
+                        <div>
+                            <div class="cmd"><code class="cmd-line"><span class="prompt" aria-hidden="true">$ </span><span class="cmd-text">npx ai-consultants configure</span></code><button class="copy" type="button" data-copy aria-label="Copy step 1">Copy</button></div>
+                            <p>Finds the CLIs and API keys you have, turns on only those, and saves your settings to <code>~/.config/ai-consultants/.env</code>, readable only by you. No model calls.</p>
+                        </div>
+                    </li>
+                    <li>
+                        <span class="setup-n" aria-hidden="true">2</span>
+                        <div>
+                            <div class="cmd"><code class="cmd-line"><span class="prompt" aria-hidden="true">$ </span><span class="cmd-text">npx ai-consultants doctor</span></code><button class="copy" type="button" data-copy aria-label="Copy step 2">Copy</button></div>
+                            <p>A free check of your setup. Add <code>--live</code> to send one tiny, billed test message to each model and confirm you're signed in.</p>
+                        </div>
+                    </li>
+                    <li>
+                        <span class="setup-n" aria-hidden="true">3</span>
+                        <div>
+                            <div class="cmd"><code class="cmd-line"><span class="prompt" aria-hidden="true">$ </span><span class="cmd-text">npx ai-consultants "Which edge cases does this migration plan miss?" docs/migration.md</span></code><button class="copy" type="button" data-copy aria-label="Copy step 3">Copy</button></div>
+                            <p>Your question, then the files to look at. The last line printed is your results folder; open <code>report.md</code> inside it.</p>
+                        </div>
+                    </li>
+                </ol>
+            </div>
+
+            <div class="tabpanel" role="tabpanel" id="panel-claude" aria-labelledby="tab-claude" tabindex="0">
+                <h3 class="panel-title">Claude Code</h3>
+                <div class="cmd-stack">
+                    <div>
+                        <div class="cmd"><code class="cmd-line"><span class="prompt" aria-hidden="true">$ </span><span class="cmd-text">curl -fsSL https://raw.githubusercontent.com/matteoscurati/ai-consultants/main/scripts/install.sh | bash</span></code><button class="copy" type="button" data-copy aria-label="Copy the install command">Copy</button></div>
+                        <p class="panel-text">Installs the skill and its slash commands for Claude Code.</p>
+                    </div>
+                    <div>
+                        <div class="cmd"><code class="cmd-line"><span class="prompt" aria-hidden="true">$ </span><span class="cmd-text">npx ai-consultants configure</span></code><button class="copy" type="button" data-copy aria-label="Copy the configure command">Copy</button></div>
+                        <p class="panel-text">Same setup step as in the terminal. No model calls.</p>
+                    </div>
+                    <p class="panel-text then">Then, inside Claude Code:</p>
+                    <div>
+                        <div class="cmd"><code class="cmd-line"><span class="cmd-text">/ai-consultants:consult "What could go wrong with this design?" src/webhooks.ts</span></code><button class="copy" type="button" data-copy aria-label="Copy the slash command">Copy</button></div>
+                        <p class="panel-text">Claude is left out of the panel and the merge automatically.</p>
+                    </div>
+                    <p class="panel-text">Using Codex CLI or Antigravity instead? They load ai-consultants as a skill your agent can call, with no slash commands, and the installer above doesn't set them up. The <a href="https://github.com/matteoscurati/ai-consultants/blob/main/docs/SETUP.md" target="_blank" rel="noopener">setup guide</a> shows where to link it. In Codex, approve network access when asked.</p>
+                </div>
+            </div>
+        </div>
+
+        <p class="warn"><span aria-hidden="true">&#9888;</span> <strong>Watch for typos:</strong> any first word after <code>npx ai-consultants</code> that isn't one of its commands (configure, doctor, init, install, update-clis, version, help) is read as a question and starts a real, billed run.</p>
+
+        <a class="more-link" href="https://github.com/matteoscurati/ai-consultants/blob/main/docs/SETUP.md" target="_blank" rel="noopener">Other ways to install (SkillPort for Cursor, Copilot and Windsurf; git clone; standalone Bash) &rarr;</a>
+    </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq" aria-labelledby="faq-title">
+    <div class="container">
+        <div class="section-label">FAQ</div>
+        <h2 id="faq-title">Questions developers ask first</h2>
+
+        <div class="faq">
+            <details open>
+                <summary>Why not just ask my own agent?</summary>
+                <p>For a question with one right answer, do. Your agent is one model with one set of habits. Models from other companies, each asked once and separately, often raise points it didn't, and the list shows you which. That's most useful when you're trying to list everything that could go wrong. You still decide what's right.</p>
+            </details>
+            <details>
+                <summary>Is it more accurate than one strong model?</summary>
+                <p>We haven't shown that, and we don't claim it. Two small internal tests found a gain when listing risks and edge cases, and none when hunting planted bugs. The panel shows what several models say and where they agree, and agreement isn't correctness.</p>
+            </details>
+            <details>
+                <summary>Does it vote on one answer?</summary>
+                <p>No. By default it keeps every distinct point and notes who raised it, so a point only one model made isn't averaged away. <code>--strategy compare_only</code> puts the answers side by side with no pick. Other merge styles, including one blended recommendation, are in the docs.</p>
+            </details>
+            <details>
+                <summary>Which models answer, and can I choose?</summary>
+                <p>By default, every model you've set up; you need at least two, or the run won't start. Pick them with <code>npx ai-consultants configure --interactive</code>, or use a mode: <code>--mode fast-check</code> (Gemini and Codex, in cheaper versions), <code>--mode coverage-review</code> (Gemini, Codex and Mistral) or <code>--mode max-coverage</code> (the widest panel at the highest model tier; slowest and most expensive).</p>
+            </details>
+            <details>
+                <summary>Where do the results go?</summary>
+                <p>To a folder under <code>~/.cache/ai-consultants/consultations/</code>. It holds <code>report.md</code>, one JSON file per model with its full answer, <code>synthesis.json</code> with the merged list, and <code>context.md</code> with exactly what was sent. Inside Claude Code, the command also shows a summary of the same report.</p>
+            </details>
+        </div>
+
+        <a class="more-link faq-more" href="https://github.com/matteoscurati/ai-consultants/blob/main/references/configuration.md" target="_blank" rel="noopener">Everything else (modes, presets, merge strategies, model tiers, budgets, routing) is in the configuration reference &rarr;</a>
+    </div>
+</section>
+
+</main>
 
 <!-- FOOTER -->
 <footer>
-    <div class="container footer-inner">
-        <ul class="footer-links">
-            <li><a href="https://github.com/matteoscurati/ai-consultants" target="_blank" rel="noopener">GitHub</a></li>
-            <li><a href="https://www.npmjs.com/package/ai-consultants" target="_blank" rel="noopener">npm</a></li>
-            <li><a href="https://github.com/matteoscurati/ai-consultants/blob/main/LICENSE" target="_blank" rel="noopener">MIT License</a></li>
-        </ul>
-        <div class="footer-credit">
-            Built by <a href="https://github.com/matteoscurati" target="_blank" rel="noopener">Matteo Scurati</a> &middot; &copy; 2026
+    <div class="container">
+        <div class="footer-main">
+            <ul class="footer-links">
+                <li><a href="https://github.com/matteoscurati/ai-consultants#readme" target="_blank" rel="noopener">Docs (README)</a></li>
+                <li><a href="https://github.com/matteoscurati/ai-consultants/blob/main/docs/SETUP.md" target="_blank" rel="noopener">Setup</a></li>
+                <li><a href="https://github.com/matteoscurati/ai-consultants/blob/main/docs/RECIPES.md" target="_blank" rel="noopener">Recipes</a></li>
+                <li><a href="https://github.com/matteoscurati/ai-consultants/blob/main/references/configuration.md" target="_blank" rel="noopener">Configuration reference</a></li>
+                <li><a href="https://github.com/matteoscurati/ai-consultants/blob/main/CHANGELOG.md" target="_blank" rel="noopener">Changelog</a></li>
+                <li><a href="https://www.npmjs.com/package/ai-consultants" target="_blank" rel="noopener">npm</a></li>
+                <li><a href="https://github.com/matteoscurati/ai-consultants" target="_blank" rel="noopener">GitHub</a></li>
+                <li><a href="https://github.com/matteoscurati/ai-consultants/issues" target="_blank" rel="noopener">Report an issue</a></li>
+                <li><a href="https://github.com/matteoscurati/ai-consultants/blob/main/LICENSE" target="_blank" rel="noopener">MIT License</a></li>
+            </ul>
+            <div class="shields">
+                <!-- The hidden span is the release-automation marker (sync_site.sh rewrites it); the live npm badge is what visitors see. -->
+                <a href="https://www.npmjs.com/package/ai-consultants" target="_blank" rel="noopener"><img src="https://img.shields.io/npm/v/ai-consultants?style=flat-square&amp;labelColor=141414&amp;color=2a2a2a" alt="npm version" height="20" loading="lazy"><span class="sr-only">Current release: <span class="badge">v5.3.1</span></span></a>
+                <a href="https://github.com/matteoscurati/ai-consultants" target="_blank" rel="noopener"><img src="https://img.shields.io/github/stars/matteoscurati/ai-consultants?style=flat-square&amp;labelColor=141414&amp;color=2a2a2a" alt="GitHub stars" height="20" loading="lazy"></a>
+                <a href="https://github.com/matteoscurati/ai-consultants/blob/main/LICENSE" target="_blank" rel="noopener"><img src="https://img.shields.io/github/license/matteoscurati/ai-consultants?style=flat-square&amp;labelColor=141414&amp;color=2a2a2a" alt="License" height="20" loading="lazy"></a>
+            </div>
         </div>
+        <p class="footer-fine">Independent open-source project, not affiliated with or endorsed by Google, OpenAI, Anthropic, Mistral, Moonshot, Alibaba, xAI, MiniMax, Zhipu or DeepSeek. Built by <a href="https://github.com/matteoscurati" target="_blank" rel="noopener">Matteo Scurati</a> &middot; &copy; 2026</p>
     </div>
 </footer>
 
-<!-- TOAST -->
-<div class="toast" id="toast">Copied to clipboard</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script>
-function closeMenu() {
-    document.querySelector('.nav-links').classList.remove('open');
-}
+(function () {
+    'use strict';
 
-function copyNpx() {
-    navigator.clipboard.writeText('npx ai-consultants').then(function() {
+    var toastTimer;
+    function showToast(msg) {
         var toast = document.getElementById('toast');
+        toast.textContent = msg;
         toast.classList.add('show');
-        setTimeout(function() { toast.classList.remove('show'); }, 2000);
-    });
-}
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(function () { toast.classList.remove('show'); }, 3200);
+    }
 
-document.querySelectorAll('a[href^="#"]').forEach(function(anchor) {
-    anchor.addEventListener('click', function(e) {
-        e.preventDefault();
-        var target = document.querySelector(this.getAttribute('href'));
-        if (target) target.scrollIntoView({ behavior: 'smooth' });
+    function fallbackCopy(text) {
+        var ta = document.createElement('textarea');
+        ta.value = text;
+        ta.setAttribute('readonly', '');
+        ta.style.position = 'fixed';
+        ta.style.top = '-1000px';
+        document.body.appendChild(ta);
+        ta.select();
+        var ok = false;
+        try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+        document.body.removeChild(ta);
+        return ok;
+    }
+
+    function copyText(text, msg, btn) {
+        function done(ok) {
+            showToast(ok ? msg : 'Copy failed. Select the command and copy it by hand.');
+            if (ok && btn) {
+                var label = btn.textContent;
+                btn.textContent = 'Copied';
+                setTimeout(function () { btn.textContent = label; }, 1600);
+            }
+        }
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(text).then(
+                function () { done(true); },
+                function () { done(fallbackCopy(text)); }
+            );
+        } else {
+            done(fallbackCopy(text));
+        }
+    }
+
+    // Per-command copy buttons copy the visible command text (the "$ " prompt is not part of it).
+    document.querySelectorAll('button[data-copy]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            var src = btn.parentNode.querySelector('.cmd-text');
+            if (src) copyText(src.textContent, 'Copied.', btn);
+        });
     });
-});
+
+    // Mobile menu
+    var menuBtn = document.querySelector('.menu-btn');
+    var navLinks = document.getElementById('nav-links');
+    function setMenu(open) {
+        navLinks.classList.toggle('open', open);
+        menuBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+    menuBtn.addEventListener('click', function () { setMenu(!navLinks.classList.contains('open')); });
+    navLinks.querySelectorAll('a').forEach(function (a) { a.addEventListener('click', function () { setMenu(false); }); });
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && navLinks.classList.contains('open')) { setMenu(false); menuBtn.focus(); }
+    });
+
+    // Respect reduced motion: no autoplay, show the poster with controls instead
+    var demoVideo = document.querySelector('.card-video');
+    if (demoVideo && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        demoVideo.removeAttribute('autoplay');
+        demoVideo.pause();
+        demoVideo.controls = true;
+    }
+
+    // Example card: first 3 points on narrow screens, with a Show all toggle
+    var card = document.getElementById('example');
+    var showAll = card.querySelector('.show-all');
+    card.classList.add('collapsed');
+    showAll.hidden = false;
+    showAll.addEventListener('click', function () {
+        var collapsed = card.classList.toggle('collapsed');
+        showAll.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+        showAll.textContent = collapsed ? 'Show all' : 'Show fewer';
+    });
+
+    // Pins on the card highlight the matching How it works step on hover/focus
+    document.querySelectorAll('.pin').forEach(function (pin) {
+        var step = document.getElementById('step-' + pin.getAttribute('data-step'));
+        if (!step) return;
+        function on() { step.classList.add('linked'); }
+        function off() { step.classList.remove('linked'); }
+        pin.addEventListener('mouseenter', on);
+        pin.addEventListener('mouseleave', off);
+        pin.addEventListener('focus', on);
+        pin.addEventListener('blur', off);
+    });
+
+    // Tabs (Terminal / Claude Code)
+    var tabs = Array.prototype.slice.call(document.querySelectorAll('[role="tab"]'));
+    function selectTab(tab, focus) {
+        tabs.forEach(function (t) {
+            var selected = t === tab;
+            t.setAttribute('aria-selected', selected ? 'true' : 'false');
+            t.tabIndex = selected ? 0 : -1;
+            document.getElementById(t.getAttribute('aria-controls')).hidden = !selected;
+        });
+        if (focus) tab.focus();
+    }
+    tabs.forEach(function (tab, i) {
+        tab.addEventListener('click', function () { selectTab(tab, false); });
+        tab.addEventListener('keydown', function (e) {
+            var next = null;
+            if (e.key === 'ArrowRight') next = tabs[(i + 1) % tabs.length];
+            if (e.key === 'ArrowLeft') next = tabs[(i - 1 + tabs.length) % tabs.length];
+            if (e.key === 'Home') next = tabs[0];
+            if (e.key === 'End') next = tabs[tabs.length - 1];
+            if (next) { e.preventDefault(); selectTab(next, true); }
+        });
+    });
+    if (tabs.length) selectTab(tabs[0], false);
+})();
 </script>
 
 </body>
